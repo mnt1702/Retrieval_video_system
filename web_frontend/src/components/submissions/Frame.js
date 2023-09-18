@@ -4,7 +4,7 @@ import { Draggable } from "react-beautiful-dnd";
 import classes from "./Column.module.css";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import SubmissionContext from "../store/submissionContext";
-import host_ip from "../constant"
+import * as constant from "../constant"
 
 const Frame = (props) => {
     const [isHovering, setIsHovering] = useState(false);
@@ -26,7 +26,7 @@ const Frame = (props) => {
                 >
                     <img
                         className={classes.image}
-                        src={`${host_ip}/get_image?video=${props.frame.video}&frameid=${props.frame.frameid}`}
+                        src={`${constant.host_ip}/get_image?video=${props.frame.video}&frameid=${props.frame.frameid}`}
                     />
                     {isHovering && (
                         <button className={classes.btn} onClick={handleRemove}>

@@ -1,13 +1,13 @@
 import React, { useContext, useState } from "react";
 import NextPageContext from "../store/nextpageCtx";
 import classes from "./TextQueryForm.module.css";
-import host_ip from "../constant"
+import * as constant from "../constant"
 
 function TextQueryForm({ setDataList }) {
     const [before, setBefore] = useState("");
     const [query, setQuery] = useState("");
     const [after, setAfter] = useState("");
-    const [topk, setTopk] = useState("");
+    const [topk, setTopk] = useState(100);
     const [ocrQuery, setOCRQuery] = useState("");
     const [ocrthresh, setOCRthresh] = useState("");
     const [object, setObject] = useState("");
@@ -17,10 +17,12 @@ function TextQueryForm({ setDataList }) {
 
     const fetch_image = async (url) => {
         const response = await fetch(
-            `${host_ip}/${url}`
+            `${constant.host_ip}/${url}`
         );
+        // console.log(`${constant.host_ip}/${url}`)
         if (response.ok) {
             const data = await response.json();
+            // console.log(data);
             setDataList(data);
             nextpageCtx.setPage(1);
             nextpageCtx.setQuery(query);
@@ -33,13 +35,15 @@ function TextQueryForm({ setDataList }) {
             nextpageCtx.setObjthresh(objthresh);
         }
     };
-    // console.log(`search?query=${query}&topk=${topk}&before=${before}&after=${after}&ocrquery=${ocrQuery}`)
 
     const submitHandler = async (e) => {
         e.preventDefault();
-        if(!ocrthresh) setOCRthresh(0.8);
-        if(!objthresh) setObjthresh(0.5);
-        await fetch_image(`search?query=${query}&topk=${topk}&before=${before}&after=${after}&ocrquery=${ocrQuery}&ocrthresh=${ocrthresh}&object=${object}&objectthresh=${objthresh}`);
+        let url = `search?query=${query}&topk=${topk}&before=${before}&after=${after}`
+        if (ocrQuery)
+            url += `&ocrquery=${ocrQuery}&ocrthresh=${ocrthresh}`
+        if (object) 
+            url += `&object=${object}&objectthresh=${objthresh}`
+        await fetch_image(url);
     };
 
     const handleKeyDown = (e) => {

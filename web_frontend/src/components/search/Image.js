@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import SubmissionContext from "../store/submissionContext";
 import NextPageContext from "../store/nextpageCtx";
-import host_ip from "../constant"
+import * as constant from "../constant"
 
 const Image = ({
     video,
@@ -62,7 +62,7 @@ const Image = ({
             <div className={classes.imageContainer}>
             <img
                 className={classes.image}
-                src={`${host_ip}/get_image?video=${video}&frameid=${frameid}`}
+                src={`${constant.host_ip}/get_image?video=${video}&frameid=${frameid}`}
                 alt="frameid"
                 />
             </div>

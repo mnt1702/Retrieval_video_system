@@ -19,6 +19,19 @@
     background-color: rgb(154, 148, 234);
 }
 
+.addKNNBtn{
+    text-decoration: none;
+    background-color: lightblue;
+    margin: 0 2.5rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 20px;
+}
+
+.addKNNBtn:hover {
+    background-color: rgb(154, 148, 234);
+}
+
 
 .clearBtn {
     margin: 0 2.5rem;

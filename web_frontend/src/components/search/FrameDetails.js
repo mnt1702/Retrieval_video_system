@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import classes from "./FrameDetails.module.css";
 import Image from "./Image";
-import host_ip from "../constant"
+import * as constant from "../constant"
 
 const FrameDetails = ({video, frameid, setVidID, onClose }) => {
 
@@ -9,21 +9,33 @@ const FrameDetails = ({video, frameid, setVidID, onClose }) => {
     let data = {};
     const [watch_url, setWatchUrl] = useState("");
 
-    const fetch_url = async (video) => {
-        const response = await fetch(
-            `${host_ip}/${url}`
-        );
-        
-        data = await fetch(`${host_ip}/get_metadata/${video}`);
-        setWatchUrl(data["url"]);
+    const getUrl = async (video) => {
+        try {
+            const response =  await fetch( 
+                `${constant.host_ip}/get_metadata?video=${video}`, {
+                    method: 'GET',
+                    headers: {
+                    accept: 'application/json',
+                    },
+                }
+            );
+            if(response.ok) {
+                const url = await response.json();
+                setWatchUrl(url["url"])
+            }
+        } 
+        catch (err) {
+            console.log(err);
+        }
     }
-    fetch_url(video);
+    useEffect(() => { getUrl(video) }, [video]);
 
-    console.log("url", video)
-    console.log(data)
+    // console.log("url", video)
+    // console.log("link", watch_url)
+
     const getFrames = async (video) => {
         const response = await fetch(
-            `${host_ip}/get_video/${video}`
+            `${constant.host_ip}/get_video/${video}`
         );
         if (response.ok) {
             const data = await response.json();
@@ -42,7 +54,7 @@ const FrameDetails = ({video, frameid, setVidID, onClose }) => {
                 <>
                     <div className={classes.imageSection}>
                         <img
-                            src={`${host_ip}/get_image?video=${video}&frameid=${frameid}`}
+                            src={`${constant.host_ip}/get_image?video=${video}&frameid=${frameid}`}
                         />
                         <h3> {video} / {frameid} </h3>
                         <h3> {data && <a href={watch_url} target="_blank">Youtube Link</a>} </h3>                     
