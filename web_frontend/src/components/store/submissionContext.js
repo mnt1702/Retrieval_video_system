@@ -72,12 +72,14 @@ export const SubmissionProvider = ({ children }) => {
 
     const deleteFrame = (frameId) => {
         setSubmittedFrames((submittedFrames) => {
-            const newSubmittedFrames = submittedFrames;
+            let newSubmittedFrames = submittedFrames;
             delete newSubmittedFrames[frameId];
             localStorage.setItem(
                 "submittedFrames",
                 JSON.stringify(newSubmittedFrames)
             );
+            console.log("r")
+            console.log(newSubmittedFrames)
             return newSubmittedFrames;
         });
 

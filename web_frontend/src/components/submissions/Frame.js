@@ -12,6 +12,8 @@ const Frame = (props) => {
 
     const handleRemove = () => {
         submissionCtx.removeFrame(props.frame.id);
+        // console.log("new")
+        // console.log(submissionCtx)
     };
     return (
         <Draggable draggableId={props.frame.id} index={props.index}>

@@ -35,17 +35,17 @@ def get_all_ocr_infos(root_file = None, root_dir = None):
             reader = csv.DictReader(csvfile)
             for row in reader:
                 info = {}
-                info["frameid"] = row["frameid"]
-                info["video"] = row["video"]
+                info["frameid"] = row["keyframe_id"]
+                info["video"] = row["video_id"]
 
                 info["texts"] = row["texts"]
-                info["texts"] = ast.literal_eval(info["texts"])
+                info["texts"] = info["texts"].split(' ')
 
-                info["polygons"] = row["polygons"]
-                info["polygons"] = ast.literal_eval(info["polygons"])
+                # info["polygons"] = row["polygons"]
+                # info["polygons"] = ast.literal_eval(info["polygons"])
 
-                info["scores"] = row["scores"]
-                info["scores"] = ast.literal_eval(info["scores"])
+                # info["scores"] = row["scores"]
+                # info["scores"] = ast.literal_eval(info["scores"])
 
                 infos.append(info)
     

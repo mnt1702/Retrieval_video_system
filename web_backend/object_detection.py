@@ -12,7 +12,7 @@ def obj_det_extract():
     detections = set()
     
     for video, frameid in image_ids:
-        object_path = f"{source}\\objects-b1\\objects\\{video}\\{frameid}.json"
+        object_path = f"{source}\\objects\\{video}\\{frameid}.json"
         
         with open(object_path) as jsonfile:
             det_data = json.load(jsonfile)

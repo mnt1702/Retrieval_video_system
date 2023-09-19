@@ -5,8 +5,8 @@ import FrameDetails from "./FrameDetails";
 const VideoModal = ({open, setOpen, video_id, setVidID}) => {
 
     const handleClose = () => setOpen(false)
-    const [video, setVideo] = useState();
-    const [frameid, setFrame] = useState();
+    const [video, setVideo] = useState("");
+    const [frameid, setFrame] = useState("");
     useEffect(() => {
         setVideo(video_id.slice(0, 8));
         setFrame(video_id.slice(9));

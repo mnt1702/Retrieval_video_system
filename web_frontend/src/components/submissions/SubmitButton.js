@@ -7,7 +7,16 @@ import * as constant from "../constant";
 const SubmitButton = () => {
     const submissionCtx = useContext(SubmissionContext);
     const [submissionCSV, setSubmissionCSV] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingSpam, setIsLoadingSpam] = useState(false);
+    const [isLoadingMapping, setIsLoadingMapping] = useState(false);
+
+
+    useEffect(() => {
+        const frameIds = submissionCtx.columns["column-1"].frameIds;
+        if (frameIds) {
+            setSubmissionCSV(frameIds);
+        }
+    }, [submissionCtx.columns["column-1"].frameIds]);
 
 
     useEffect(() => {
@@ -15,23 +24,15 @@ const SubmitButton = () => {
         // console.log("frameIds")
         // console.log(frameIds)
         if (frameIds) {
-            setSubmissionCSV(
-                frameIds.map((frameId) => {
-                    return {
-                        video: frameId.slice(0, 8),
-                        frameid: frameId.slice(9),
-                    };
-                }),
-            );
+            setSubmissionCSV( frameIds );
         }
     }, [submissionCtx.columns["column-1"].frameIds]);
-
-    console.log(submissionCSV);
-    console.log('id')
+    // console.log("submissionCSV");
+    // console.log(submissionCSV);
+    // console.log('id')
     const spamSimilarityFrames = () => {
-        const fetchKNN = async () => {
-
-            setIsLoading(true)
+        const similarity = async () => {
+            setIsLoadingSpam(true)
             const response = await fetch(
                 `${constant.host_ip}/submissions`,
                 {
@@ -45,22 +46,59 @@ const SubmitButton = () => {
             );
             if (response.ok) {
                 const data = await response.json()
-                console.log(data["data"]);
+                // console.log("submissions spam")
+                // console.log(data["data"]);
                 if(data) {
-                    setSubmissionCSV(
-                        data["data"].map((frameId) => {
-                            return {
-                                video: frameId.slice(0, 8),
-                                frameid: frameId.slice(9),
-                            };
-                        }),
-                    );
+                    setSubmissionCSV( data["data"]);
                 }
             }
-            setIsLoading(false)
+            setIsLoadingSpam(false)
         };
-        fetchKNN();
+        similarity();
     }
+    const Mapping_index = () => {
+        const mapping = async () => {
+            setIsLoadingMapping(true)
+            const response = await fetch(
+                `${constant.host_ip}/mapping`,
+                {
+                    method: "POST",
+                    "headers": {"Content-Type": "application/json"},
+
+                    body: JSON.stringify({
+                        "data": submissionCSV
+                    })
+                }
+            );
+            if (response.ok) {
+                const data = await response.json()
+                // console.log("submissions spam")
+                // console.log(data["data"]);
+                if(data) {
+                    setSubmissionCSV( data["data"]);
+                }
+            }
+            setIsLoadingMapping(false)
+        };
+        mapping();
+    }
+    useEffect(() => {
+        const frameIds = submissionCSV;
+        if (frameIds) {
+            setSubmissionCSV(
+                frameIds.map((frameId) => {
+                    return {
+                        video: frameId.slice(0, 8),
+                        frame: frameId.slice(9),
+                    };
+                }),
+            );
+        }
+    }, [submissionCSV]);
+
+
+    // console.log("submissionCSV");
+    // console.log(submissionCSV);
     // console.log("csv");
     // console.log(submissionCSV)
     const clearSubmissionsHandler = () => {
@@ -72,7 +110,7 @@ const SubmitButton = () => {
         {id: "frameid", displayName: "frameid"},
 
     ]
-    // console.log("submissioncsv")
+    // console.log("submissioncsv1")
     // console.log(submissionCSV)
     return (
         
@@ -84,11 +122,16 @@ const SubmitButton = () => {
                 >
                     Clear
                 </button>
-                <button className={classes.addKNNBtn} onClick={spamSimilarityFrames}>
-                    {!isLoading ? "Spam" : "Loading ..."} 
+                <button className={classes.addSpamBtn} onClick={spamSimilarityFrames}>
+                    {!isLoadingSpam ? "Spam" : "Loading ..."} 
                 </button>
+                
+                <button className={classes.addMappingBtn} onClick={Mapping_index}> 
+                    {isLoadingMapping ? "Mapping" : "Loading ..."}
+                </button>
+
                 <CsvDownload
-                    filename="submission_raw.csv"
+                    filename="query-p3-.csv"
                     separator=","
                     columns={columns}
                     datas={submissionCSV}

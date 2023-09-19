@@ -3,7 +3,6 @@ import faiss
 import pandas as pd
 import clip
 import torch
-import glob
 from constant import *
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -41,7 +40,7 @@ def search_vector(query, faiss_index, topk):
     return f_ids
 
 def get_vid_frameids(ids):
-    image_ids = pd.read_csv(f"{source}/image_ids.csv", dtype={"filepath": "string", "video": "string", "frameid": "string"})
+    image_ids = pd.read_csv(f"{source}/image_ids.csv", dtype={"video": "string", "frameid": "string", "mapping": "int"})
     image_ids = list(zip(image_ids['video'], image_ids["frameid"]))
     res = []
     for i in ids:
@@ -59,7 +58,7 @@ def full_search(faiss_index, topk = 100, query = None, before = None, after = No
     if before != None: 
         before = search_vector(before, faiss_index, topk + 10)
         for i in before:
-            if i == max_size: break
+            if i == max_size - 1: break
             res_bef.extend(list(range(i+1, i + 5 if i + 5 <= max_size else max_size)))
     else: res_bef = res_q
     if after != None:

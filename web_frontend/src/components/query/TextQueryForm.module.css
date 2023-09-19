@@ -10,10 +10,22 @@
 
 }
 
-.input {
+.inputquery {
+    width: 75%;
     resize: none;
     font-family: 'Montserrat', sans-serif;
-    max-height: 3rem;
+    max-height: 5rem;
+    padding: 0.5rem;
+    border-radius: 5px;
+    margin: 1rem 0;
+    background-color: #dce8df;
+}
+
+.inputnum {
+    width: 20%;
+    resize: none;
+    font-family: 'Montserrat', sans-serif;
+    max-height: 5rem;
     padding: 0.5rem;
     border-radius: 5px;
     margin: 1rem 0;

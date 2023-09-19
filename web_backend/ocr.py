@@ -1,6 +1,6 @@
 from utils import isEqual, get_all_ocr_infos, get_info_by_id
 import pandas as pd
-from search import full_search, get_vid_frameids
+# from search import full_search, get_vid_frameids
 from constant import *
 
 def search_ocr_all(query, infos, crt_threshold=0.8, top_k=100):
@@ -15,8 +15,6 @@ def search_ocr_all(query, infos, crt_threshold=0.8, top_k=100):
     for info in infos:
         if(not info): continue
         texts = info["texts"]
-        polygons = info["polygons"]
-        scores = info["scores"]
 
         correct_word = 0
 
@@ -58,8 +56,6 @@ def search_ocr(query, candiates, infos, crt_threshold=0.8, top_k=100):
     for info in candiate_infos:
         if(not info): continue
         texts = info["texts"]
-        polygons = info["polygons"]
-        scores = info["scores"]
 
         correct_word = 0
 

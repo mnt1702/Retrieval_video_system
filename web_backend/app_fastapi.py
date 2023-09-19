@@ -1,11 +1,8 @@
 import numpy as np
 import pandas as pd
-import clip
-import torch
 from PIL import Image
 import os
 import faiss
-import csv
 import io
 import uvicorn
 from fastapi import FastAPI
@@ -17,8 +14,9 @@ from search import *
 from object_detection import *
 from utils import *
 from ocr import *
-from typing import Optional, List
+from typing import Optional, List, Dict
 from fastapi.responses import JSONResponse, FileResponse, StreamingResponse
+from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from constant import *
 
@@ -37,8 +35,10 @@ app.add_middleware(
 # load ocr_infos, faiss_index, frame_index
 infos = get_all_ocr_infos(f"{source}/OCR.csv")
 faiss_index = faiss.read_index(f"{source}/faiss_index.bin")
-image_ids = pd.read_csv(f"{source}/image_ids.csv", dtype={"filepath": "string", "video": "string", "frameid": "string"})
-
+image_ids = pd.read_csv(f"{source}/image_ids.csv", dtype={"video": "string", "frameid": "string", "mapping": "int", "pts_time": "float"})
+info = list(zip(image_ids["video"], image_ids["frameid"]))
+map_idx = list(image_ids["mapping"])
+pts_time = list(image_ids["pts_time"])
 
 @app.get('/')
 async def introduce():
@@ -46,53 +46,37 @@ async def introduce():
 
 @app.get('/search')
 async def get_frame_from_query(query: Optional[str] = None, topk: Optional[int] = 100, 
-                               before: Optional[str] = None, after: Optional[str] = None,
-                               ocrquery: Optional[str] = None, ocrthresh: Optional[float] = 0.8,
-                               object: Optional[str] = None, objectthresh: Optional[float] = 0.5):
-    if not before: before = None
-    if not after: after = None
+                               ocrquery: Optional[str] = None, ocrthresh: Optional[float] = 0.8):
+    if not query: query = None
     if not ocrquery: ocrquery = None
-    if not object: object = None
 
-    search_q = True
-    if query == None and before == None and after == None:
-        search_q = False
-
-    if search_q == False and ocrquery:
-        if not ocrthresh: 
-            ocrthresh = 0.8
+    if not query and ocrquery:
         results = search_ocr_all(ocrquery, infos, ocrthresh, topk)        
-    elif search_q and not ocrquery:
+    elif query and not ocrquery:
         ids = []
-        ids = full_search(faiss_index= faiss_index, topk= topk, query= query, before= before, after= after)
+        ids = search_vector(faiss_index= faiss_index, topk= topk, query= query)
         results = get_vid_frameids(ids)
     else:
         if not ocrthresh: 
             ocrthresh = 0.8
         ids = []
-        ids = full_search(faiss_index= faiss_index, topk= topk, query= query, before= before, after= after)
+        ids = search_vector(faiss_index= faiss_index, topk= topk, query= query)
         candiates = get_vid_frameids(ids)
+        # print(candiates)
         results = search_ocr(ocrquery, candiates, infos, ocrthresh, topk)
-    if object:
-        if not objectthresh: 
-            objectthresh = 0.5
-        temp = []
-        for res in results:
-            video = res[:8]
-            frameid = res[9:]
-            if check_object(video, frameid, object, objectthresh):
-                temp.append(video + '_' + frameid)
-        results = temp
+    
     return JSONResponse({"data": results})
 
 @app.get('/get_metadata')
-async def get_metadata(video: str):
+async def get_metadata(video: str, frameid: str):
     path = f"{source}/metadata/{video}.json"
-    with open(path, "r") as jsonfile:
+    # print(path)
+    with open(path, "r", encoding='utf-8', errors='ignore') as jsonfile:
         metadata = json.load(jsonfile)
     if metadata:
-        return {"url": metadata["watch_url"]}
-    return {"error": "No youtube link"}
+        pts_time = pts_time[info.index((video, frameid))]
+        return JSONResponse({"url": f"""{metadata["watch_url"]}&t={pts_time}s&autoplay=0""" })
+    return JSONResponse({"error": "No youtube link"})
 
 
 @app.get('/get_image')
@@ -118,7 +102,7 @@ async def get_frame_video(video: str):
 
     return JSONResponse({'data': results})
 
-@app.post("/get_near/{video}/{frameid}")
+@app.get("/get_near")
 async def get_frame_near(video: str, frameid: str):
     image_ids_l = list(zip(image_ids['video'], image_ids["frameid"]))
     
@@ -142,24 +126,29 @@ async def check_object_detection(video: str, frameid: str, cls: str, score: floa
 @app.get("/get_similarity")
 async def get_similarity(video: str, frameid: str, topk: Optional[int] = 100):
     results = get_frame_similarity(video, frameid, topk)
-    return {"data": results}
+    return {"data": results}   
 
-@app.get("/mapping")
-async def get_mapping(video: str, frameid: str):
-    map_table = pd.read_csv(f"{source}/map-keyframes/{video}.csv", dtype={"n": "int", "pts_time": "float", "fps": "float", "frame_idx": "int"})
-    for id, frame_idx in zip(map_table['n'], map_table['frame_idx']):
-        if id == int(frameid): 
-            return frame_idx
-    return {"error": "not exist"}
+class resultsConfig(BaseModel):
+    data: List[str]
+
+@app.post("/mapping")
+async def get_mapping(results: resultsConfig):
+    map_results = []
+    for res_id in results.data:
+        video = res_id[:8]
+        frameid = res_id[9:]
+        id = map_idx[info.index((video, frameid))]
+        map_results.append(id)
+    return JSONResponse({"data": map_results})
 
 @app.post("/submissions")
-async def get_submission(res_ids: List[str]):
-    topk = math.floor(100/len(res_ids)) - 1
-    final_results = list(res_ids)
-    for res_id in res_ids:
-        final_results.extend(get_frame_similarity(res_id[:8], res_id[9:], topk))
-    return JSONResponse({"data": final_results})
-
+async def get_submission(results: resultsConfig):
+    final_res = results.data
+    for res_id in results.data:
+        temp = get_frame_near(res_id[:8], res_id[9:])
+        if len(final_res) + len(temp) > 100: break
+        final_res.extend(temp)
+    return JSONResponse({"data": final_res})
 
 if __name__ == '__main__':
-    uvicorn.run("app_fastapi:app", host="127.0.0.1", port=3000, reload=True)
+    uvicorn.run("app_fastapi:app", host="0.0.0.0", port=3000, reload=True)
