@@ -1,29 +1,46 @@
+#main-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
 .container {
     width: 100%;
     height: 70vh;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    position: relative;
+}
+
+.container h5 {
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
 }
 
 .imageSection {
-    width: 50%;
-    height: 40%;
+    width: 100%;
+    height: 60%;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
 }
 
 .videoSection {
     width: 50%;
-    height: 40%;
+    height: 100%;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex: 1;
+}
+
+.videoSection iframe {
+    width: 100%
 }
 
 .imageNearList {
-    width: 90%;
-    height: 10%;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    overflow: auto;
 }
 
 .frameSimilarityList {
@@ -32,4 +49,18 @@
     overflow: auto;
     display: flex;
     flex-wrap: wrap;
+}
+
+.frameList {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.imageNearCont {
+    text-align: center;
+    margin: 2vh 0;
+}
+
+.imageNearList :nth-child(6) > div {
+    border: solid 5px red;
 }

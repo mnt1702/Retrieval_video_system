@@ -1,21 +1,22 @@
 .container {
-    width: 100vw;
-    height: 100vh;
+    width: 99.1vw;
+    height: 99.8vh;
     display: flex;
     flex-direction: row;
+    background-color: #2a302c;
 }
 
 .search_space {
-    width: 23%;
+    width: 26%;
     height: 100%;
     background-color: #c4f0ce;
 }
 
 .result_space {
-    width: 67%;
+    width: 63%;
     height: 100%;
     overflow: auto;
-    background-color: #2a302c;
+    margin: 0.2rem;
 }
 
 .submission_space {

@@ -4,43 +4,49 @@ import classes from "./TextQueryForm.module.css";
 import * as constant from "../constant"
 
 function TextQueryForm({ setDataList }) {
-    const [before, setBefore] = useState("");
     const [query, setQuery] = useState("");
-    const [after, setAfter] = useState("");
     const [topk, setTopk] = useState(100);
     const [ocrQuery, setOCRQuery] = useState("");
     const [ocrthresh, setOCRthresh] = useState(0.8);
-    const [object, setObject] = useState("");
-    const [objthresh, setObjthresh] = useState("");
     const nextpageCtx = useContext(NextPageContext);
     const [isLoadingSearch, setIsLoadingSearch] = useState(false); 
-
+    const [speakQuery, setSpeakQuery] = useState("");
+    const [topk_s, setTopk_s] = useState(100);
 
     const fetch_image = async (url) => {
         setIsLoadingSearch(true);
         const response = await fetch(
             `${constant.host_ip}/${url}`
         );
-        // console.log(`${constant.host_ip}/${url}`)
         if (response.ok) {
             const data = await response.json();
-            // console.log(data);
+            // console.log("data")
+            // console.log(data['data']);
             setDataList(data);
             nextpageCtx.setPage(1);
             nextpageCtx.setQuery(query);
             nextpageCtx.setTopk(topk);
             nextpageCtx.setOCRQuery(ocrQuery);
             nextpageCtx.setOCRthresh(ocrthresh);
+            nextpageCtx.setSpeakQuery(speakQuery);
+            nextpageCtx.setTopk_s(topk_s);
         }
         setIsLoadingSearch(false);
     };
 
     const submitHandler = async (e) => {
         e.preventDefault();
-        let url = `search?query=${query}&topk=${topk}&before=${before}&after=${after}`;
-        if (ocrQuery)
+        if (topk)
+            setTopk(100);
+        let url = `search?query=${query}&topk=${topk}`;
+        if (ocrQuery) {
             if (!ocrthresh) setOCRthresh(0.8);
             url += `&ocrquery=${ocrQuery}&ocrthresh=${ocrthresh}`;
+        }
+        if (speakQuery) {
+            if (!topk_s) setTopk_s(100);
+            url += `&speakquery=${speakQuery}&topk_s=${topk_s}`;
+        }
         await fetch_image(url);
     };
 
@@ -52,22 +58,23 @@ function TextQueryForm({ setDataList }) {
     return (
         <div className={classes.container}>
             <form onSubmit={submitHandler} className={classes.form}>
+                <b> <label> Search </label> </b>
                 <div>
                     <textarea
                         className={classes.inputquery}
                         onKeyDown={handleKeyDown}
-                        placeholder="Type your query ..."
+                        placeholder="Query"
                         onChange={(e) => setQuery(e.target.value)}
                         value={query}
                     />
                     <textarea
                         className={classes.inputnum}
                         onKeyDown={handleKeyDown}
-                        placeholder="Top K"
                         onChange={(e) => setTopk(e.target.value)}
                         value={topk}
                     />
                 </div>
+                <b> <label> OCR </label> </b>
                 <div>
                     <textarea
                         className={classes.inputquery}
@@ -79,9 +86,24 @@ function TextQueryForm({ setDataList }) {
                     <textarea
                         className={classes.inputnum}
                         onKeyDown={handleKeyDown}
-                        placeholder="OCR threshold"
                         onChange={(e) => setOCRthresh(e.target.value)}
                         value={ocrthresh}
+                    />
+                </div>
+                <b> <label> Speak Query </label> </b>
+                <div>
+                    <textarea
+                        className={classes.inputquery}
+                        onKeyDown={handleKeyDown}
+                        placeholder="Speak query"
+                        onChange={(e) => setSpeakQuery(e.target.value)}
+                        value={speakQuery}
+                    />
+                    <textarea
+                        className={classes.inputnum}
+                        onKeyDown={handleKeyDown}
+                        onChange={(e) => setTopk_s(e.target.value)}
+                        value={topk_s}
                     />
                 </div>
                 <button className={classes.scoreBtn}> 

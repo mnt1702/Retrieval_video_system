@@ -19,7 +19,6 @@ def get_frame_feature_vector(video, frameids):
     image_ids = list(zip(image_ids['video'], image_ids["frameid"]))
     
     img_idx = image_ids.index((video, frameids))
-
     image_clipfeatures = np.load("F:/AIC2023/dataset/clip_embeddings.npy")
 
     image_feature = image_clipfeatures[img_idx].astype(np.float64)
@@ -40,11 +39,10 @@ def search_vector(query, faiss_index, topk):
     return f_ids
 
 def get_vid_frameids(ids):
-    image_ids = pd.read_csv(f"{source}/image_ids.csv", dtype={"video": "string", "frameid": "string", "mapping": "int"})
-    image_ids = list(zip(image_ids['video'], image_ids["frameid"]))
+    image_ids = pd.read_csv(f"{source}/image_ids.csv", dtype={"video": "string", "frameid": "string", "mapping": "int", "pts_time": "float"})
     res = []
     for i in ids:
-        res.append(image_ids[i][0] + "_" + image_ids[i][1])
+        res.append(image_ids['video'][i] + "_" + image_ids['frameid'][i])
     return res
 
 def full_search(faiss_index, topk = 100, query = None, before = None, after = None):

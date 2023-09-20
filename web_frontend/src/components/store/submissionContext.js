@@ -78,8 +78,8 @@ export const SubmissionProvider = ({ children }) => {
                 "submittedFrames",
                 JSON.stringify(newSubmittedFrames)
             );
-            console.log("r")
-            console.log(newSubmittedFrames)
+            // console.log("r")
+            // console.log(newSubmittedFrames)
             return newSubmittedFrames;
         });
 

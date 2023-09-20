@@ -15,7 +15,7 @@ const FrameDetails = ({video, frameid, setVidID, onClose }) => {
     const getUrl = async (video) => {
         try {
             const response =  await fetch( 
-                `${constant.host_ip}/get_metadata?video=${video}`, {
+                `${constant.host_ip}/get_metadata?video=${video}&frameid=${frameid}`, {
                     method: 'GET',
                     headers: {
                     accept: 'application/json',
@@ -31,7 +31,6 @@ const FrameDetails = ({video, frameid, setVidID, onClose }) => {
             console.log(err);
         }
     }
-    useEffect(() => { getUrl(video) }, [video]);
     
 
     // console.log("url", video)
@@ -41,74 +40,90 @@ const FrameDetails = ({video, frameid, setVidID, onClose }) => {
         const response = await fetch(
             `${constant.host_ip}/get_near?video=${video}&frameid=${frameid}`
         );
+        console.log(response);
+        console.log(`${constant.host_ip}/get_near?video=${video}&frameid=${frameid}`)
         if (response.ok) {
             const data = await response.json();
             const data_list = data["data"];
-            // console.log("data")
-            // console.log(data)
-            data_list.sort();
+            console.log(data_list);
             setFramesNear(data_list);
         }
     };
     const getFramesSimilarity = async (video, frameid) => {
         const response = await fetch(
-            `${constant.host_ip}/get_similarity?video=${video}&frameid=${frameid}&topk=30`
+            `${constant.host_ip}/get_similarity?video=${video}&frameid=${frameid}&topk=35`
         );
+        console.log(`${constant.host_ip}/get_similarity?video=${video}&frameid=${frameid}&topk=100`)
+        console.log(response);
+        
         if(response.ok) {
             const data = await response.json();
             const data_list = data['data'];
+            console.log(data_list);
             setFramesSimilarity(data_list)
         }
     };
 
-    useEffect(() => { getFramesNear(video, frameid) }, [video, frameid]);
-    useEffect(() => { getFramesSimilarity(video, frameid) }, [video, frameid]);
+    useEffect( () => {
+        if(video && frameid) {
+            getUrl(video);
+            getFramesNear(video, frameid);
+            getFramesSimilarity(video, frameid);
+        }
+    }, [video, frameid]);
 
     return (
+        <div id='main-container'>
+        <h5> {video} / {frameid} </h5>
         <div className={classes.container}>
-            <h5> {video} / {frameid} </h5>
             {video && (
                 <>
                     <div className={classes.imageSection}>
                         <img
                             src={`${constant.host_ip}/get_image?video=${video}&frameid=${frameid}`}
                         />
+                        <div className={classes.videoSection}>
+                            <iframe src= {watch_url}> </iframe>
+                        </div>
                         {/* <h3> {data && <a href={watch_url} target="_blank">Youtube Link</a>} </h3>                      */}
                     </div>
-                    <div className={classes.videoSection}>
-                        <iframe src= {watch_url}> </iframe>
+                    <div className={classes.imageNearCont}>
+                        <h4> Nearby frames </h4>
+                        <div className={classes.imageNearList}>
+                            {framesNear.map((item) => (
+                                <Image 
+                                    video={item.slice(0, 8)}
+                                    frameid={item.slice(9)}
+                                    setVidID={setVidID}
+                                    setOpen={() => {}}
+                                    setClose={onClose}
+                                    isChosen={
+                                        item === `${video}-${frameid}` ? true : false
+                                    }
+                                />
+                            ))}
+                        </div>
                     </div>
-                    <div className={classes.imageNearList}>
-                        {framesNear.map((item) => (
-                            <Image 
-                                video={item.slice(0, 8)}
-                                frameid={item.slice(9)}
-                                setVidID={setVidID}
-                                setOpen={() => {}}
-                                setClose={onClose}
-                                isChosen={
-                                    item === `${video}-${frameid}` ? true : false
-                                }
-                            />
-                        ))}
-                    </div>
-                    <div className={classes.frameList}>
-                        {frameSimilarity.map((item) => (
-                            <Image
-                                video={item.slice(0, 8)}
-                                frameid={item.slice(9)}
-                                setVidID={setVidID}
-                                setOpen={() => {}}
-                                setClose={onClose}
-                                isChosen={
-                                    item === `${video}-${frameid}` ? true : false
-                                }
-                            />
-                        ))}
+                    <div style={{textAlign: "center"}}>
+                        <h4>Similar frames</h4>
+                        <div className={classes.frameList}>
+                            {frameSimilarity.map((item) => (
+                                <Image
+                                    video={item.slice(0, 8)}
+                                    frameid={item.slice(9)}
+                                    setVidID={setVidID}
+                                    setOpen={() => {}}
+                                    setClose={onClose}
+                                    isChosen={
+                                        item === `${video}-${frameid}` ? true : false
+                                    }
+                                />
+                            ))}
+                        </div>
                     </div>
                 </>
             )}
-        </div>
+        </div></div>
     );
 };
 

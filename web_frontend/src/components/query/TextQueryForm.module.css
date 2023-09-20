@@ -11,11 +11,11 @@
 }
 
 .inputquery {
-    width: 75%;
+    width: 77%;
     resize: none;
     font-family: 'Montserrat', sans-serif;
     max-height: 5rem;
-    padding: 0.5rem;
+    padding: 1rem;
     border-radius: 5px;
     margin: 1rem 0;
     background-color: #dce8df;
@@ -26,17 +26,20 @@
     resize: none;
     font-family: 'Montserrat', sans-serif;
     max-height: 5rem;
-    padding: 0.5rem;
+    padding: 1rem;
     border-radius: 5px;
     margin: 1rem 0;
+    margin-left: 3%;
     background-color: #dce8df;
 }
 
 .scoreBtn{
     width: 8rem;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
+    height: 2.7rem;
     margin: 0 auto;
     background-color: lightblue;
+    border-radius: 2vh;
 }
 
 .scoreBtn:hover {
