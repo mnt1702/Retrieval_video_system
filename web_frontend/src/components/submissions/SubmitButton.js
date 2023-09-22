@@ -8,7 +8,7 @@ const SubmitButton = () => {
     const submissionCtx = useContext(SubmissionContext);
     const [submissionCSV, setSubmissionCSV] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-
+    const [isLoadingmap, setIsLoadingmap] = useState(false);
 
     useEffect(() => {
         const frameIds = submissionCtx.columns["column-1"].frameIds;
@@ -19,9 +19,9 @@ const SubmitButton = () => {
 
     console.log(submissionCSV);
     
-    const exportSubmission = () => {
+    const Mapping_idx = () => {
         const mapping = async () => {
-            setIsLoading(true);
+            setIsLoadingmap(true);
             const response = await fetch(
                 `${constant.host_ip}/mapping`,
                 {
@@ -33,22 +33,26 @@ const SubmitButton = () => {
                     })
                 }
             );
+            console.log(response);
             if (response.ok) {
                 const data = await response.json()
+                console.log(data['data'])
                 if(data) {
                     const res_ids = data["data"];
                     setSubmissionCSV(
-                        res_ids.map((id) => {
-                            return {
-                                video: id.slice(0, 8),
-                                frameid: id.slice(9),
-                            };
-                        }),
+                        res_ids
                     );
                 }
             }
+            setIsLoadingmap(false);
+
         };
+        mapping();
+    }
+
+    const exportSubmission = () => {
         const similarity = async () => {
+            setIsLoading(true);
             const response = await fetch(
                 `${constant.host_ip}/submissions`,
                 {
@@ -56,7 +60,7 @@ const SubmitButton = () => {
                     "headers": {"Content-Type": "application/json"},
 
                     body: JSON.stringify({
-                        "data": submissionCtx.columns["column-1"].frameIds
+                        "data": submissionCSV
                     })
                 }
             );
@@ -77,11 +81,8 @@ const SubmitButton = () => {
             }
             setIsLoading(false);
         };
-        mapping();
         similarity();
     }
-
-    console.log(submissionCSV);
 
     const clearSubmissionsHandler = () => {
         submissionCtx.clearSubmissions();
@@ -92,8 +93,8 @@ const SubmitButton = () => {
         {id: "frameid", displayName: "frameid"},
 
     ]
-    // console.log("submissioncsv1")
-    // console.log(submissionCSV)
+    console.log("submissioncsv1")
+    console.log(submissionCSV)
     return (
         
         submissionCSV && (
@@ -104,9 +105,14 @@ const SubmitButton = () => {
                 >
                     Clear
                 </button>
-                <button className={classes.addMappingBtn} onClick={exportSubmission}>
-                    { !isLoading ? "Process" : "Loading" }
+                <button className={classes.addMappingBtn} onClick={Mapping_idx}>
+                    { !isLoadingmap ? "Map" : "Loading" }
                 </button>
+
+                <button className={classes.addMappingBtn} onClick={exportSubmission}>
+                    { !isLoading ? "Spam" : "Loading" }
+                </button>
+                
                 <CsvDownload
                     filename="query-p3-.csv"
                     separator=","

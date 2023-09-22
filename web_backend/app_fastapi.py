@@ -181,7 +181,7 @@ async def get_submission(results: resultsConfig):
         video = res_id[:8]
         id = res_id[9:]
         temp = []
-        for i in range(1, topk + 20):
+        for i in range(1, topk + 1):
             temp.append(video + '_' + str(int(id) + i*12))
             if int(id) > i*12:
                 temp.append(video + '_' + str(int(id) - i*12))
