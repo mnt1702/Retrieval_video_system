@@ -17,7 +17,7 @@ def compute_clip_feature(img_path):
 
 if __name__ == '__main__':
     # test 
-    path = r'D:\WorkSpace\Contest\HCM_AIC2023\F:\AIC2023\dataset\keyframes\L01_V001\0001.jpg'
+    path = r'D:\WorkSpace\Contest\HCM_AIC2023\dataset\keyframes\L01_V001\0001.jpg'
 
     fe = compute_clip_feature(path)
     print(fe)

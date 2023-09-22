@@ -10,5 +10,5 @@ def create_index_vector(clip_features):
     faiss.write_index(index, 'faiss_index.bin')
 
 if __name__ == '__main__':
-    image_features = np.load(f"{source}/clip_embeddings.npy")
+    image_features = np.load("dataset/clip_embeddings.npy")
     create_index_vector(image_features)
