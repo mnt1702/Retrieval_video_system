@@ -21,6 +21,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from constant import *
 import math
 from caption import *
+from translation import *
 
 app = FastAPI()
 
@@ -34,7 +35,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# load ocr_infos, faiss_index, frame_index
+tokenizer_vi2en = AutoTokenizer.from_pretrained("vinai/vinai-translate-vi2en", src_lang="vi_VN")
+model_vi2en = AutoModelForSeq2SeqLM.from_pretrained("vinai/vinai-translate-vi2en")
+
 #OCR
 infos = get_all_ocr_infos(f"{source}/OCR.csv")
 #Caption
@@ -193,6 +196,12 @@ async def get_submission(results: resultsConfig):
                     return JSONResponse({"data": final_res})
 
     return JSONResponse({"data": final_res})
+
+@app.get("/translations")
+async def get_trans(vi_query: Optional[str] = None):
+    en_query = translate_vi2en(tokenizer_vi2en, model_vi2en, vi_query)
+    return JSONResponse({"trans_en": en_query})   
+
 
 if __name__ == '__main__':
     uvicorn.run("app_fastapi:app", host="0.0.0.0", port=3000, reload=True)
