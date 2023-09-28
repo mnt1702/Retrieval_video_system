@@ -65,31 +65,30 @@ async def introduce():
 
 @app.get('/search')
 async def get_frame_from_query(query: Optional[str] = None, topk: Optional[int] = 100, 
-                               ocrquery: Optional[str] = None, ocrthresh: Optional[float] = 0.8,
+                               ocrquery: Optional[str] = None, ocrthresh: Optional[float] = 0.8, topk_o: Optional[int] = 100,
                                speakquery: Optional[str] = None, topk_s: Optional[int] = 100):
     if not query: query = None
     if not ocrquery: ocrquery = None
     if not speakquery: speakquery = None
 
     if not query and ocrquery:
-        results = search_ocr_all(ocrquery, infos, ocrthresh, topk)        
+        results = []
+        results = search_ocr_all(ocrquery, infos, ocrthresh, topk_o)        
     if query and not ocrquery:
-        ids = []
-        ids = search_vector(faiss_index= faiss_index, topk= topk, query= query)
-        results = get_vid_frameids(ids)
+        results = []
+        results = search_vector(image_ids, faiss_index= faiss_index, topk= topk, query= query)
     if query and ocrquery:
         if not ocrthresh: 
             ocrthresh = 0.8
-        ids = []
-        ids = search_vector(faiss_index= faiss_index, topk= topk, query= query)
-        candiates = get_vid_frameids(ids)
-        results = search_ocr(ocrquery, candiates, infos, ocrthresh, topk)
+        candiates = []
+        candiates = search_vector(image_ids, faiss_index= faiss_index, topk= max(topk, topk_o), query= query)
+        results = search_ocr(ocrquery, candiates, infos, ocrthresh, max(topk, topk_o))
     flag = False
     if query or ocrquery:
         flag = True
 
     if flag  == False and speakquery:
-        candiates = get_vid_frameids(list(range(max_size)))
+        candiates = get_vid_frameids(image_ids, list(range(max_size)))
         results = find_text(speakquery, candiates, topk_s, "all")
     elif flag and speakquery:
         results = find_text(speakquery, results, topk_s, "res")
@@ -140,16 +139,16 @@ async def get_frame_near(video: str, frameid: str):
             frameNear.append(idx - i)
         if(len(frameNear) >= 11): break
     frameNear = sorted(frameNear)
-    results = get_vid_frameids(frameNear)
+    results = get_vid_frameids(image_ids, frameNear)
     return JSONResponse({'data': results})
-    
+
 @app.get("/check_obj_det")
 async def check_object_detection(video: str, frameid: str, cls: str, score: float):
     return {"check": check_object(video, frameid, cls, score)}
 
 @app.get("/get_similarity")
 async def get_similarity(video: str, frameid: str, topk: Optional[int] = 100):
-    results = get_frame_similarity(video, frameid, topk)
+    results = get_frame_similarity(image_ids, video, frameid, topk)
     return {"data": results}   
 
 class resultsConfig(BaseModel):

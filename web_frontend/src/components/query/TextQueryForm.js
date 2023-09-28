@@ -13,7 +13,7 @@ function TextQueryForm({ setDataList }) {
     const [speakQuery, setSpeakQuery] = useState("");
     const [topk_s, setTopk_s] = useState("100");
     const [viQuery, setViQuery] = useState("");
-
+    const [isLoadingTranslation, setIsLoadingTranslation] = useState(false);
 
     const fetch_image = async (url) => {
         setIsLoadingSearch(true);
@@ -22,8 +22,6 @@ function TextQueryForm({ setDataList }) {
         );
         if (response.ok) {
             const data = await response.json();
-            // console.log("data")
-            // console.log(data['data']);
             setDataList(data);
             nextpageCtx.setPage(1);
             nextpageCtx.setViQuery(viQuery);
@@ -59,6 +57,7 @@ function TextQueryForm({ setDataList }) {
     };
 
     const submitTranslateHandler = async (e) => {
+        setIsLoadingTranslation(true);
         e.preventDefault()
         const response = await fetch(
             `${constant.host_ip}/translations?vi_query=${viQuery}`
@@ -67,6 +66,7 @@ function TextQueryForm({ setDataList }) {
             const data = await response.json();
             setQuery(data["trans_en"]);
         }
+        setIsLoadingTranslation(false);
     }
 
     return (
@@ -81,7 +81,9 @@ function TextQueryForm({ setDataList }) {
                     value={viQuery}
                 />
 
-                <button className={classes.scoreBtn}>Translate</button>
+                <button className={classes.scoreBtn}>
+                    {!isLoadingTranslation ? "Translate" : "Loading ..."}
+                </button>
             </form>
             <form onSubmit={submitHandler} className={classes.form}>
                 <b> <label> Search </label> </b>

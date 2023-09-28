@@ -72,7 +72,7 @@ const SubmitButton = () => {
                 </button>
 
                 <button className={classes.addMappingBtn} onClick={exportSubmission}>
-                    { !isLoading ? "Spam" : "Loading" }
+                    { !isLoading ? "Spam" : "Loading..." }
                 </button>
                 
                 <CsvDownload

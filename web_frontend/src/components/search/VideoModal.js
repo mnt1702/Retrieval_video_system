@@ -11,8 +11,6 @@ const VideoModal = ({open, setOpen, video_id, setVidID}) => {
         setVideo(video_id.slice(0, 8));
         setFrame(video_id.slice(9));
     }, [video_id]);
-    // console.log("video, frameid")
-    // console.log(video, frameid)
     return (
         <Modal open={open} onClose={handleClose} backdrop="true" size="full" >
             <Modal.Body>

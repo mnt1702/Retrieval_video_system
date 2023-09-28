@@ -23,7 +23,7 @@ const Image = ({
             const wait = async () => {
                 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
                 await sleep(2000);
-                imageRef.current.scrollIntoView({ behavior: "smooth" });
+                // imageRef.current.scrollIntoView({ behavior: "smooth" });
             };
             wait();
         }
@@ -43,16 +43,6 @@ const Image = ({
         >
             {isHovering && (
                 <div className={classes.btns}>
-                    {/* <button
-                        className={classes.btn}
-                        onClick={() => {
-                            setOpen(true);
-                            setVidID(`${video}-${frameid}`);
-                        }}
-                        onMouseOver={() => setIsHovering(true)}
-                    >
-                        Details
-                    </button> */}
                     <button className={classes.btn} onClick={handleSubmission}>
                         <FontAwesomeIcon icon={faCheck} />
                     </button>
@@ -61,7 +51,7 @@ const Image = ({
             <div className={classes.imageContainer}
                 onMouseOver={() => setIsHovering(true)}
                 onMouseLeave={() => setIsHovering(false)}
-                style={isChosen ? { border: "solid 10px green" } : {}}
+                style={isChosen ? { border: "solid 2px red" } : {}}
                 ref={imageRef}
             >
             <img
@@ -70,12 +60,12 @@ const Image = ({
                 alt="frameid"
                 onClick={() => {
                     setOpen(true);
-                    setVidID(`${video}-${frameid}`);
+                    setVidID(`${video}_${frameid}`);
                 }}
                 />
             </div>
             {isHovering && <div className={classes.details}>
-                {`${video}\\${frameid}`}
+                {`${video}/${frameid}`}
             </div>}
         </div>
     );

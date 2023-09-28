@@ -31,14 +31,14 @@ export const SubmissionProvider = ({ children }) => {
     const [columnsOrder, setColumnsOrder] = useState(["column-1"]);
 
     const submitFrame = (video, frameid) => {
-        if (`${video}-${frameid}` in submittedFrames) {
+        if (`${video}_${frameid}` in submittedFrames) {
             alert("Frame Already submitted");
         } else {
             setSubmittedFrames((submittedFrames) => {
                 const newSubmittedFrames = {
                     ...submittedFrames,
-                    [`${video}-${frameid}`]: {
-                        id: `${video}-${frameid}`,
+                    [`${video}_${frameid}`]: {
+                        id: `${video}_${frameid}`,
                         video: video,
                         frameid: frameid,
                     },
@@ -54,7 +54,7 @@ export const SubmissionProvider = ({ children }) => {
                 const columnFrameIds = columns["column-1"].frameIds;
                 const newColumnFrameIds = [
                     ...columnFrameIds,
-                    `${video}-${frameid}`,
+                    `${video}_${frameid}`,
                 ];
 
                 const newColumns = {

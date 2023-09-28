@@ -31,17 +31,17 @@ def check_object(video, frameid, cls, threshold):
         return True
     return False
 
-if __name__ == '__main__':
-    # obj_det_extract()
-    ids = search_vector("there is a coffee house", 10)
-    results = get_vid_frameids(ids)
-    temp = []
-    for res in results:
-        print(res)
-        video = res[:8]
-        frameid = res[9:]
-        if check_object(video, frameid, "Woman", 0.5):
-            temp.append(video + '_' + frameid)
-    results = temp
-    print(results)
+# if __name__ == '__main__':
+#     # obj_det_extract()
+#     ids = search_vector("there is a coffee house", 10)
+#     results = get_vid_frameids(ids)
+#     temp = []
+#     for res in results:
+#         print(res)
+#         video = res[:8]
+#         frameid = res[9:]
+#         if check_object(video, frameid, "Woman", 0.5):
+#             temp.append(video + '_' + frameid)
+#     results = temp
+#     print(results)
     

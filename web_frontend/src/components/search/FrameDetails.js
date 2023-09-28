@@ -98,7 +98,7 @@ const FrameDetails = ({video, frameid, setVidID, onClose }) => {
                                     setOpen={() => {}}
                                     setClose={onClose}
                                     isChosen={
-                                        item === `${video}-${frameid}` ? true : false
+                                        item === `${video}_${frameid}` ? true : false
                                     }
                                 />
                             ))}
@@ -115,7 +115,7 @@ const FrameDetails = ({video, frameid, setVidID, onClose }) => {
                                     setOpen={() => {}}
                                     setClose={onClose}
                                     isChosen={
-                                        item === `${video}-${frameid}` ? true : false
+                                        item === `${video}_${frameid}` ? true : false
                                     }
                                 />
                             ))}

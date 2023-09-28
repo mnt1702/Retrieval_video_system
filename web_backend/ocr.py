@@ -79,19 +79,19 @@ def search_ocr(query, candiates, infos, crt_threshold=0.8, top_k=100):
         final_results.append(result['video'] + '_' + result['frameid'])
     return final_results
 
-if __name__ == "__main__":
-    # load trước ở global
-    infos = get_all_ocr_infos(f"{source}/OCR.csv")
+# if __name__ == "__main__":
+#     # load trước ở global
+#     infos = get_all_ocr_infos(f"{source}/OCR.csv")
 
-    query = "đội tuyển Việt Nam"
-    results = search_ocr_all(query, infos)
-    for result in results:
-        print(result)
-        print("=====================================")
+#     query = "đội tuyển Việt Nam"
+#     results = search_ocr_all(query, infos)
+#     for result in results:
+#         print(result)
+#         print("=====================================")
 
-    # candiates = pd.read_csv("F:/AIC2023/dataset/image_ids.csv", dtype={"filepath": "string", "video": "string", "frameid": "string"})
-    # ids = []
-    # ids = full_search("There is a coffee house", 100)
-    # candiates = get_vid_frameids(ids)
-    # res = search_ocr(query, candiates, infos, crt_threshold=0.8, top_k=100)
-    # print(res)
+#     # candiates = pd.read_csv("F:/AIC2023/dataset/image_ids.csv", dtype={"filepath": "string", "video": "string", "frameid": "string"})
+#     # ids = []
+#     # ids = full_search("There is a coffee house", 100)
+#     # candiates = get_vid_frameids(ids)
+#     # res = search_ocr(query, candiates, infos, crt_threshold=0.8, top_k=100)
+#     # print(res)

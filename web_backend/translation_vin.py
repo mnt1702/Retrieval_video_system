@@ -15,8 +15,8 @@ def translate_vi2en(tokenizer_vi2en, model_vi2en, vi_texts: str) -> str:
     en_texts = tokenizer_vi2en.batch_decode(output_ids, skip_special_tokens=True)
     return en_texts
 
-if __name__ == '__main__':
-    tokenizer_vi2en = AutoTokenizer.from_pretrained("vinai/vinai-translate-vi2en", src_lang="vi_VN")
-    model_vi2en = AutoModelForSeq2SeqLM.from_pretrained("vinai/vinai-translate-vi2en")
-    vi_text = "Cô cho biết: trước giờ tôi không đến phòng tập công cộng, mà tập cùng giáo viên Yoga riêng hoặc tự tập ở nhà. Khi tập thể dục trong không gian riêng tư, tôi thoải mái dễ chịu hơn."
-    print(translate_vi2en(tokenizer_vi2en, model_vi2en, vi_text))
+# if __name__ == '__main__':
+#     tokenizer_vi2en = AutoTokenizer.from_pretrained("vinai/vinai-translate-vi2en", src_lang="vi_VN")
+#     model_vi2en = AutoModelForSeq2SeqLM.from_pretrained("vinai/vinai-translate-vi2en")
+#     vi_text = "Cô cho biết: trước giờ tôi không đến phòng tập công cộng, mà tập cùng giáo viên Yoga riêng hoặc tự tập ở nhà. Khi tập thể dục trong không gian riêng tư, tôi thoải mái dễ chịu hơn."
+#     print(translate_vi2en(tokenizer_vi2en, model_vi2en, vi_text))

@@ -32,20 +32,22 @@ def create_index_vector(clip_features):
     index.add(fe)
     faiss.write_index(index, 'faiss_index.bin')
 
-def search_vector(query, faiss_index, topk):
+def search_vector(image_ids, query, faiss_index, topk):
     features_vector_search = get_feature_vector(query)
     f_dist, f_ids = faiss_index.search(features_vector_search, topk)
     f_ids = np.array(f_ids[0])
-    return f_ids
+    results = []
+    for id in f_ids:
+        results.append(image_ids['video'][id] + "_" + image_ids['frameid'][id])
+    return results
 
-def get_vid_frameids(ids):
-    image_ids = pd.read_csv(f"{source}/image_ids.csv", dtype={"video": "string", "frameid": "string", "mapping": "int", "pts_time": "float"})
+def get_vid_frameids(image_ids, ids):
     res = []
     for i in ids:
         res.append(image_ids['video'][i] + "_" + image_ids['frameid'][i])
     return res
 
-def get_frame_similarity(video, frameid, topk):
+def get_frame_similarity(image_ids, video, frameid, topk):
     frame_feature_vector = get_frame_feature_vector(video, frameid)
     
     faiss_index = faiss.read_index(f"{source}/faiss_index.bin")
@@ -54,16 +56,16 @@ def get_frame_similarity(video, frameid, topk):
     faiss_index.reset()
     
     f_ids = np.array(f_ids[0])
-    results = get_vid_frameids(f_ids)   
-    if f"{video}_{frameid}" in results:
-        results.remove(f"{video}_{frameid}")
-
+    results = []
+    for id in f_ids[1:]:
+        results.append(image_ids['video'][id] + "_" + image_ids['frameid'][id])
     return results
     
-if __name__ == '__main__':
-    faiss_index = faiss.read_index(f"{source}/faiss_index.bin")
-    query = "There is a dog, frame after there is a woman near the tree"
-    topk = 5
+# if __name__ == '__main__':
+    
+#     faiss_index = faiss.read_index(f"{source}/faiss_index.bin")
+#     query = "There is a dog, frame after there is a woman near the tree"
+#     topk = 5
 
     # ids = search_vector(query, faiss_index, topk)
     # ids_2 = search_vector(query, topk)

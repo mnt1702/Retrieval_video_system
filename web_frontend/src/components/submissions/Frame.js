@@ -18,24 +18,31 @@ const Frame = (props) => {
     return (
         <Draggable draggableId={props.frame.id} index={props.index}>
             {(provided) => (
-                <div
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                    ref={provided.innerRef}
-                    className={classes.frameContainer}
-                    onMouseEnter={() => setIsHovering(true)}
-                    onMouseLeave={() => setIsHovering(false)}
-                >
-                    <img
-                        className={classes.image}
-                        src={`${constant.host_ip}/get_image?video=${props.frame.video}&frameid=${props.frame.frameid}`}
-                    />
-                    {isHovering && (
-                        <button className={classes.btn} onClick={handleRemove}>
-                            <FontAwesomeIcon icon={faTrash} />
-                        </button>
-                    )}
+                <div>
+                    
+                    <div
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        ref={provided.innerRef}
+                        className={classes.frameContainer}
+                        onMouseEnter={() => setIsHovering(true)}
+                        onMouseLeave={() => setIsHovering(false)}
+                    >
+                        <img
+                            className={classes.image}
+                            src={`${constant.host_ip}/get_thumbnail?video=${props.frame.video}&frameid=${props.frame.frameid}`}
+                        />
+                        {isHovering && (
+                            <button className={classes.btn} onClick={handleRemove}>
+                                <FontAwesomeIcon icon={faTrash} />
+                            </button>
+                        )}
+                        {isHovering && <div className={classes.details}>
+                            {`${props.frame.video}/${props.frame.frameid}`}
+                        </div>}
+                    </div>
                 </div>
+                
             )}
         </Draggable>
     );
