@@ -3,15 +3,15 @@ import torch
 import pandas as pd
 import json
 import tqdm
-# from constant import max_size
+from constant import *
 
 def obj_det_extract():
-    image_ids = pd.read_csv("F:\\AIC2023\\dataset\\image_ids.csv", dtype={"filepath": "string", "video": "string", "frameid": "string"})
+    image_ids = pd.read_csv(f"{source}\\image_ids.csv", dtype={"filepath": "string", "video": "string", "frameid": "string"})
     image_ids = list(zip(image_ids['video'], image_ids['frameid']))
     detections = set()
     
     for video, frameid in tqdm.tqdm(image_ids):
-        object_path = f"F:\\AIC2023\\dataset\\objects\\{video}\\{frameid}.json"
+        object_path = f"{source}\\objects\\{video}\\{frameid}.json"
         
         with open(object_path) as jsonfile:
             det_data = json.load(jsonfile)

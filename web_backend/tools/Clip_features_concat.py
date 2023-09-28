@@ -2,14 +2,15 @@ import numpy as np
 from glob import glob
 import fiftyone as fo
 import pandas as pd
+from constant import *
 
 
 if __name__ == '__main__':
-    dataset = fo.Dataset.from_images_dir('D:\WorkSpace\Contest\HCM_AIC2023\dataset\keyframes', name=None, tags=None, recursive=True)
+    dataset = fo.Dataset.from_images_dir(f'{source}\keyframes', name=None, tags=None, recursive=True)
 
-    all_keyframe = glob("dataset\\keyframes\\*\\*.jpg")
+    all_keyframe = glob(f"{source}\\keyframes\\*\\*.jpg")
     video_keyframe_dict = {}
-    all_video = glob('dataset\\keyframes\\*')
+    all_video = glob(f'{source}\\keyframes\\*')
     all_video = [v.rsplit('\\',1)[-1] for v in all_video]
 
     for kf in all_keyframe:
@@ -24,7 +25,7 @@ if __name__ == '__main__':
         
     embedding_dict = {}
     for v in all_video:
-        clip_path = f'dataset\\clip-features-vit-b32\\{v}.npy'
+        clip_path = f'{source}\\clip-features-vit-b32\\{v}.npy'
         a = np.load(clip_path)
         embedding_dict[v] = {}
         for i,k in enumerate(video_keyframe_dict[v]):

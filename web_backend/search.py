@@ -45,35 +45,6 @@ def get_vid_frameids(ids):
         res.append(image_ids['video'][i] + "_" + image_ids['frameid'][i])
     return res
 
-def full_search(faiss_index, topk = 100, query = None, before = None, after = None):
-    res_bef = []
-    res_af = []
-    if query == None and before == None and after == None:
-        return []
-    if query != None:
-        res_q = search_vector(query, faiss_index, topk)
-    else: res_q = list(range(max_size+1))
-    if before != None: 
-        before = search_vector(before, faiss_index, topk + 10)
-        for i in before:
-            if i == max_size - 1: break
-            res_bef.extend(list(range(i+1, i + 5 if i + 5 <= max_size else max_size)))
-    else: res_bef = res_q
-    if after != None:
-        after = search_vector(after, faiss_index, topk + 10)
-        for i in after:
-            if i == 0: break
-            temp = list(range(i - 5 if i - 5 >= 0 else 0, i))
-            res_af.extend(temp)
-    else: res_af = res_q
-
-    if query == None and len(res_bef) < len(res_q): res_q = res_bef
-    if query == None and len(res_af) < len(res_q): res_q = res_af
-    
-
-    final_res = [val for val in res_q if val in res_bef and val in res_af]
-    return final_res
-
 def get_frame_similarity(video, frameid, topk):
     frame_feature_vector = get_frame_feature_vector(video, frameid)
     
@@ -94,12 +65,9 @@ if __name__ == '__main__':
     query = "There is a dog, frame after there is a woman near the tree"
     topk = 5
 
-    ids = full_search(faiss_index= faiss_index, topk= topk, after= query)
     # ids = search_vector(query, faiss_index, topk)
     # ids_2 = search_vector(query, topk)
-    res = get_vid_frameids(ids)
     # res_2 = get_vid_frameids(ids_2)
-    print(res)
     # print(res_2)
     # res = get_frame_similarity("L02_V018", "0023", 100)
     # print(res)
