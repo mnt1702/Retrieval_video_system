@@ -3,7 +3,7 @@ import torch
 import pandas as pd
 import json
 from constant import max_size
-from search import full_search, get_vid_frameids
+from search import *
 from constant import *
 
 def obj_det_extract():
@@ -33,7 +33,7 @@ def check_object(video, frameid, cls, threshold):
 
 if __name__ == '__main__':
     # obj_det_extract()
-    ids = full_search("there is a coffee house", 10)
+    ids = search_vector("there is a coffee house", 10)
     results = get_vid_frameids(ids)
     temp = []
     for res in results:

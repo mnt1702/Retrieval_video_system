@@ -5,12 +5,12 @@
 }
 
 .imageContainer {
-    border: solid 1px black;
+    border: solid 2px #2a302c;
 
 }
 
 .imageContainer:hover {
-    border: solid 1px green;
+    border: solid 2px green;
 }
 
 .image{

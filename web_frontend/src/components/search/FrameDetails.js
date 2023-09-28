@@ -80,7 +80,7 @@ const FrameDetails = ({video, frameid, setVidID, onClose }) => {
                 <>
                     <div className={classes.imageSection}>
                         <img
-                            src={`${constant.host_ip}/get_image?video=${video}&frameid=${frameid}`}
+                            src={`${constant.host_ip}/get_thumbnail?video=${video}&frameid=${frameid}&width=${700}&height=${394}`}
                         />
                         <div className={classes.videoSection}>
                             <iframe src= {watch_url}> </iframe>

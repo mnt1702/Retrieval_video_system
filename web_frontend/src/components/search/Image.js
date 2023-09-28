@@ -16,7 +16,6 @@ const Image = ({
 }) => {
     const [isHovering, setIsHovering] = useState(false);
     const submissionCtx = useContext(SubmissionContext);
-    const nextpageCtx = useContext(NextPageContext);
 
     const imageRef = useRef();
     useEffect(() => {
@@ -44,7 +43,7 @@ const Image = ({
         >
             {isHovering && (
                 <div className={classes.btns}>
-                    <button
+                    {/* <button
                         className={classes.btn}
                         onClick={() => {
                             setOpen(true);
@@ -53,17 +52,26 @@ const Image = ({
                         onMouseOver={() => setIsHovering(true)}
                     >
                         Details
-                    </button>
+                    </button> */}
                     <button className={classes.btn} onClick={handleSubmission}>
                         <FontAwesomeIcon icon={faCheck} />
                     </button>
                 </div>
             )}
-            <div className={classes.imageContainer}>
+            <div className={classes.imageContainer}
+                onMouseOver={() => setIsHovering(true)}
+                onMouseLeave={() => setIsHovering(false)}
+                style={isChosen ? { border: "solid 10px green" } : {}}
+                ref={imageRef}
+            >
             <img
                 className={classes.image}
-                src={`${constant.host_ip}/get_image?video=${video}&frameid=${frameid}`}
+                src={`${constant.host_ip}/get_thumbnail?video=${video}&frameid=${frameid}`}
                 alt="frameid"
+                onClick={() => {
+                    setOpen(true);
+                    setVidID(`${video}-${frameid}`);
+                }}
                 />
             </div>
             {isHovering && <div className={classes.details}>

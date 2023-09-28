@@ -9,7 +9,16 @@
     margin: 0.5rem 1rem;
 
 }
-
+.inputtrans{
+    width: 100%;
+    resize: none;
+    font-family: 'Montserrat', sans-serif;
+    max-height: 5rem;
+    padding: 1rem;
+    border-radius: 5px;
+    margin: 1rem 0;
+    background-color: #dce8df;
+}
 .inputquery {
     width: 77%;
     resize: none;

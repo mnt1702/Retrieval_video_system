@@ -21,7 +21,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from constant import *
 import math
 from caption import *
-from translation import *
+from translation_vin import *
+import cv2 as cv
+from deep_translator import GoogleTranslator
 
 app = FastAPI()
 
@@ -34,9 +36,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-tokenizer_vi2en = AutoTokenizer.from_pretrained("vinai/vinai-translate-vi2en", src_lang="vi_VN")
-model_vi2en = AutoModelForSeq2SeqLM.from_pretrained("vinai/vinai-translate-vi2en")
+# translation vin
+# tokenizer_vi2en = AutoTokenizer.from_pretrained("vinai/vinai-translate-vi2en", src_lang="vi_VN")
+# model_vi2en = AutoModelForSeq2SeqLM.from_pretrained("vinai/vinai-translate-vi2en")
 
 #OCR
 infos = get_all_ocr_infos(f"{source}/OCR.csv")
@@ -96,7 +98,6 @@ async def get_frame_from_query(query: Optional[str] = None, topk: Optional[int] 
 @app.get('/get_metadata')
 async def get_metadata(video: str, frameid: str):
     path = f"{source}/metadata/{video}.json"
-    # print(path)
     with open(path, "r", encoding='utf-8', errors='ignore') as jsonfile:
         metadata = json.load(jsonfile)
     if metadata:
@@ -131,7 +132,6 @@ async def get_frame_video(video: str):
 @app.get("/get_near")
 async def get_frame_near(video: str, frameid: str):
     idx = info_ids.index((video, frameid))
-    print(idx)
     frameNear = [idx]
     for i in range(1, 21):
         if image_ids['video'][idx + i] == video:
@@ -177,31 +177,48 @@ async def get_remapping(results: resultsConfig):
 
 @app.post("/submissions")
 async def get_submission(results: resultsConfig):
-    topk = round(100 / (1 + len(list(results.data)))) - 1
-    final_res = list(results.data)
-
+    topk = round(100 / (2 * len(list(results.data)))) - 1
+    map_results = []
     for res_id in results.data:
+        video = res_id[:8]
+        frameid = res_id[9:]
+        id = map_idx[info_ids.index((video, frameid))]
+        map_results.append(video + '_'+ str(id))
+    
+    for res_id in map_results:
         video = res_id[:8]
         id = res_id[9:]
         temp = []
-        for i in range(1, topk + 1):
-            temp.append(video + '_' + str(int(id) + i*12))
+        for i in range(1, topk):
+            temp.append(video + '_' + str(int(id) + i*10))
             if int(id) > i*12:
-                temp.append(video + '_' + str(int(id) - i*12))
+                temp.append(video + '_' + str(int(id) - i*10))
         if temp:
             for i in temp: 
-                if i not in final_res: 
-                    final_res.append(i)
-                if len(final_res) >= 100:
-                    return JSONResponse({"data": final_res})
-
-    return JSONResponse({"data": final_res})
+                if i not in map_results:
+                    map_results.append(i)
+                if len(map_results) >= 100:
+                    return JSONResponse({"data": map_results[:101]})
+    
+    return JSONResponse({"data": map_results})
 
 @app.get("/translations")
 async def get_trans(vi_query: Optional[str] = None):
-    en_query = translate_vi2en(tokenizer_vi2en, model_vi2en, vi_query)
+    en_query = GoogleTranslator(source='auto', target='en').translate(vi_query)
+
     return JSONResponse({"trans_en": en_query})   
 
+@app.get("/get_thumbnail")
+async def get_thumbnail(video: str, frameid: str, width: Optional[int] = 170, height: Optional[int] = 96):
+    file_path = os.path.join(f"{source}/keyframes", video, frameid + ".jpg")
+    if os.path.exists(file_path):
+        image = Image.open(file_path)
+        image.thumbnail((width, height))
+        imgio = io.BytesIO()
+        image.save(imgio, 'JPEG')
+        imgio.seek(0)
+        return StreamingResponse(content = imgio, media_type="image/jpeg")
+    return {"error": "File does not exist"}
 
 if __name__ == '__main__':
     uvicorn.run("app_fastapi:app", host="0.0.0.0", port=3000, reload=True)

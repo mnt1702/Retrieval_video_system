@@ -1,6 +1,6 @@
 from utils import isEqual, get_all_ocr_infos, get_info_by_id
 import pandas as pd
-# from search import full_search, get_vid_frameids
+from search import *
 from constant import *
 
 def search_ocr_all(query, infos, crt_threshold=0.8, top_k=100):

@@ -8,7 +8,6 @@ const SubmitButton = () => {
     const submissionCtx = useContext(SubmissionContext);
     const [submissionCSV, setSubmissionCSV] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [isLoadingmap, setIsLoadingmap] = useState(false);
 
     useEffect(() => {
         const frameIds = submissionCtx.columns["column-1"].frameIds;
@@ -16,39 +15,6 @@ const SubmitButton = () => {
             setSubmissionCSV(frameIds);
         }
     }, [submissionCtx.columns["column-1"].frameIds]);
-
-    console.log(submissionCSV);
-    
-    const Mapping_idx = () => {
-        const mapping = async () => {
-            setIsLoadingmap(true);
-            const response = await fetch(
-                `${constant.host_ip}/mapping`,
-                {
-                    method: "POST",
-                    "headers": {"Content-Type": "application/json"},
-
-                    body: JSON.stringify({
-                        "data": submissionCSV
-                    })
-                }
-            );
-            console.log(response);
-            if (response.ok) {
-                const data = await response.json()
-                console.log(data['data'])
-                if(data) {
-                    const res_ids = data["data"];
-                    setSubmissionCSV(
-                        res_ids
-                    );
-                }
-            }
-            setIsLoadingmap(false);
-
-        };
-        mapping();
-    }
 
     const exportSubmission = () => {
         const similarity = async () => {
@@ -84,6 +50,7 @@ const SubmitButton = () => {
         similarity();
     }
 
+
     const clearSubmissionsHandler = () => {
         submissionCtx.clearSubmissions();
     };
@@ -93,10 +60,8 @@ const SubmitButton = () => {
         {id: "frameid", displayName: "frameid"},
 
     ]
-    console.log("submissioncsv1")
-    console.log(submissionCSV)
+
     return (
-        
         submissionCSV && (
             <div className={classes.container}>
                 <button
@@ -104,9 +69,6 @@ const SubmitButton = () => {
                     onClick={clearSubmissionsHandler}
                 >
                     Clear
-                </button>
-                <button className={classes.addMappingBtn} onClick={Mapping_idx}>
-                    { !isLoadingmap ? "Map" : "Loading" }
                 </button>
 
                 <button className={classes.addMappingBtn} onClick={exportSubmission}>

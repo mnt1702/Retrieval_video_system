@@ -11,7 +11,9 @@ function TextQueryForm({ setDataList }) {
     const nextpageCtx = useContext(NextPageContext);
     const [isLoadingSearch, setIsLoadingSearch] = useState(false); 
     const [speakQuery, setSpeakQuery] = useState("");
-    const [topk_s, setTopk_s] = useState(100);
+    const [topk_s, setTopk_s] = useState("100");
+    const [viQuery, setViQuery] = useState("");
+
 
     const fetch_image = async (url) => {
         setIsLoadingSearch(true);
@@ -24,6 +26,7 @@ function TextQueryForm({ setDataList }) {
             // console.log(data['data']);
             setDataList(data);
             nextpageCtx.setPage(1);
+            nextpageCtx.setViQuery(viQuery);
             nextpageCtx.setQuery(query);
             nextpageCtx.setTopk(topk);
             nextpageCtx.setOCRQuery(ocrQuery);
@@ -36,7 +39,7 @@ function TextQueryForm({ setDataList }) {
 
     const submitHandler = async (e) => {
         e.preventDefault();
-        if (topk)
+        if (!topk)
             setTopk(100);
         let url = `search?query=${query}&topk=${topk}`;
         if (ocrQuery) {
@@ -55,8 +58,31 @@ function TextQueryForm({ setDataList }) {
         e.target.style.height = `${e.target.scrollHeight}px`;
     };
 
+    const submitTranslateHandler = async (e) => {
+        e.preventDefault()
+        const response = await fetch(
+            `${constant.host_ip}/translations?vi_query=${viQuery}`
+        );
+        if (response.ok) {
+            const data = await response.json();
+            setQuery(data["trans_en"]);
+        }
+    }
+
     return (
         <div className={classes.container}>
+            <form onSubmit={submitTranslateHandler} className={classes.form}>
+                <b> <label>Vietnamese Query</label> </b>
+                <textarea
+                    className={classes.inputtrans}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Type your query here ..."
+                    onChange={(e) => setViQuery(e.target.value)}
+                    value={viQuery}
+                />
+
+                <button className={classes.scoreBtn}>Translate</button>
+            </form>
             <form onSubmit={submitHandler} className={classes.form}>
                 <b> <label> Search </label> </b>
                 <div>

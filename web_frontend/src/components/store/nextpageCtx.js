@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 const NextPageContext = React.createContext({
     page: null,
+    viQuery: "",
     query: "",
     topk: 100,
     ocrQuery: "",
@@ -10,6 +11,7 @@ const NextPageContext = React.createContext({
     topk_s: 100,
     setPage:() => {},
     setQuery:() => {},
+    setViQuery: () => {},
     setTopk:() => {},
     setOcrQuery:() => {},
     setOcrthresh:() => {},
@@ -21,6 +23,7 @@ export default NextPageContext;
 export const NextPageContextProvider =  ({children}) => {
     const [page, setPage] = useState(null);
     const [query, setQuery] = useState("");
+    const [viQuery, setViQuery] = useState("");
     const [topk, setTopk] = useState(100);
     const [ocrQuery, setOCRQuery] = useState("");
     const [ocrthresh, setOCRthresh] = useState("");
@@ -30,6 +33,8 @@ export const NextPageContextProvider =  ({children}) => {
     const contextData = {
         page: page,
         setPage: setPage,
+        viQuery: viQuery,
+        setViQuery: setViQuery,
         query: query,
         setQuery: setQuery,
         topk: topk,
