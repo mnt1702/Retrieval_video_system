@@ -1,6 +1,6 @@
 .container {
-    width: 99.1vw;
-    height: 99.8vh;
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: row;
     background-color: #2a302c;
@@ -13,7 +13,7 @@
 }
 
 .result_space {
-    width: 63%;
+    flex: 1;
     height: 100%;
     overflow: auto;
     margin: 0.2rem;

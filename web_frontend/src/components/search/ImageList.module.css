@@ -8,3 +8,7 @@
     border-radius: 14px;
     background-color: lightblue;
 }
+
+.container > div {
+    width: calc(100%/var(--list-columns));
+}

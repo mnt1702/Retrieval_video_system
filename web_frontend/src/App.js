@@ -20,17 +20,20 @@ function App() {
 
     return (
         <div className={classes.container}>
-            <div className={classes.search_space}>
+            <div id='search' className={classes.search_space}>
                 <Logo />
                 <TextQueryForm setDataList={setDataList} />
-            </div>
-            <div className={classes.result_space}>
+		<span id='note'>Press Tab to focus on the result</span>
+            </div><div className={classes.result_space}>
                 <ImageList
                     dataList={dataList}
                     setDataList={setDataList}
                     setOpen={setOpenModal}
                     setOpenedVidID={setOpenedVidID}
                 />
+            </div><div id='submission' className={classes.submission_space}>
+                <SubmissionList />
+                <SubmitButton />
             </div>
             <VideoModal
                 open={openModal}
@@ -38,10 +41,6 @@ function App() {
                 video_id={openedVidID}
                 setVidID={setOpenedVidID}
             />
-            <div className={classes.submission_space}>
-                <SubmissionList />
-                <SubmitButton />
-            </div>
         </div>
     );
 }
