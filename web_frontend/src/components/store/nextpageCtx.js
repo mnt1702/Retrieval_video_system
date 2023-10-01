@@ -7,6 +7,7 @@ const NextPageContext = React.createContext({
     topk: 100,
     ocrQuery: "",
     ocrthresh: 0.8,
+    topk_o: 100,
     speakQuery: "",
     topk_s: 100,
     setPage:() => {},
@@ -14,6 +15,7 @@ const NextPageContext = React.createContext({
     setViQuery: () => {},
     setTopk:() => {},
     setOcrQuery:() => {},
+    setTopk_o:() => {},
     setOcrthresh:() => {},
     setSpeakQuery:() => {},
     setTopk_s:() => {}
@@ -27,6 +29,7 @@ export const NextPageContextProvider =  ({children}) => {
     const [topk, setTopk] = useState(100);
     const [ocrQuery, setOCRQuery] = useState("");
     const [ocrthresh, setOCRthresh] = useState("");
+    const [topk_o, setTopk_o] = useState(100);
     const [speakQuery, setSpeakQuery] = useState("");
     const [topk_s, setTopk_s] = useState(100);
 
@@ -43,6 +46,8 @@ export const NextPageContextProvider =  ({children}) => {
         setOCRQuery: setOCRQuery,
         ocrthresh: ocrthresh,
         setOCRthresh: setOCRthresh,
+        topk_o: topk_o,
+        setTopk_o: setTopk_o,
         speakQuery: speakQuery,
         setSpeakQuery: setSpeakQuery,
         topk_s: topk_s,

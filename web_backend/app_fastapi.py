@@ -24,6 +24,7 @@ from caption import *
 from translation_vin import *
 import cv2 as cv
 from deep_translator import GoogleTranslator
+from typing import Annotated
 
 app = FastAPI()
 
@@ -46,8 +47,11 @@ infos = get_all_ocr_infos(f"{source}/OCR.csv")
 f = open(f'{source}/captions.json', encoding="utf8")
 caption = json.load(f)
 f.close()
+
 #Faiss index
 faiss_index = faiss.read_index(f"{source}/faiss_index.bin")
+# if torch.cuda.is_available(): faiss_index = faiss.index_cpu_to_all_gpus(faiss_index)
+
 #Image index
 image_ids = pd.read_csv(f"{source}/image_ids.csv", dtype={"video": "string", "frameid": "string", "mapping": "int", "pts_time": "float"})
 info_ids = list(zip(image_ids["video"], image_ids["frameid"]))
@@ -117,7 +121,7 @@ async def get_image(video: str, frameid: str):
     
     return {"error": "File does not exist"}
 
-@app.get("/get_video/{video}")
+@app.get("/get_video")
 async def get_frame_video(video: str):
     image_ids_l = list(zip(image_ids['video'], image_ids['frameid']))
 
@@ -218,6 +222,11 @@ async def get_thumbnail(video: str, frameid: str, width: Optional[int] = 170, he
         imgio.seek(0)
         return StreamingResponse(content = imgio, media_type="image/jpeg")
     return {"error": "File does not exist"}
+
+@app.get("/search_images")
+async def search_images(image, topk: Optional[int] = 100):
+    results = search_image_vector(image_ids, image, faiss_index, topk)
+    return JSONResponse({"data": results})
 
 if __name__ == '__main__':
     uvicorn.run("app_fastapi:app", host="0.0.0.0", port=3000, reload=True)

@@ -1,10 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import CsvDownload from "react-csv-downloader";
 import SubmissionContext from "../store/submissionContext";
 import classes from "./SubmitButton.module.css";
 import * as constant from "../constant";
+import { CSVLink } from 'react-csv';
 
-const SubmitButton = () => {
+function SubmitButton() {
     const submissionCtx = useContext(SubmissionContext);
     const [submissionCSV, setSubmissionCSV] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -50,7 +51,6 @@ const SubmitButton = () => {
         similarity();
     }
 
-
     const clearSubmissionsHandler = () => {
         submissionCtx.clearSubmissions();
     };
@@ -74,7 +74,7 @@ const SubmitButton = () => {
                 <button className={classes.addMappingBtn} onClick={exportSubmission}>
                     { !isLoading ? "Spam" : "Loading..." }
                 </button>
-                
+
                 <CsvDownload
                     filename="query-p3-.csv"
                     separator=","

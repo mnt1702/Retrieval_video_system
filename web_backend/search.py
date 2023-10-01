@@ -4,6 +4,7 @@ import pandas as pd
 import clip
 import torch
 from constant import *
+from PIL import Image
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model, preprocess = clip.load("ViT-B/32", device=device)
@@ -60,16 +61,42 @@ def get_frame_similarity(image_ids, video, frameid, topk):
     for id in f_ids[1:]:
         results.append(image_ids['video'][id] + "_" + image_ids['frameid'][id])
     return results
-    
-# if __name__ == '__main__':
-    
-#     faiss_index = faiss.read_index(f"{source}/faiss_index.bin")
-#     query = "There is a dog, frame after there is a woman near the tree"
-#     topk = 5
 
+def get_image_feature_vector(image):    
+    image = preprocess(image).unsqueeze(0).to(device)
+
+    with torch.no_grad():
+        img_feature = model.encode_image(image)
+        img_feature /= img_feature.norm(dim=-1, keepdim=True)
+    return img_feature.cpu().numpy()
+
+
+def search_image_vector(image_ids, image, faiss_index, topk):
+    features_vector_search = get_image_feature_vector(image)
+    f_dist, f_ids = faiss_index.search(features_vector_search, topk)
+    f_ids = np.array(f_ids[0])
+    results = []
+    for id in f_ids:
+        results.append(image_ids['video'][id] + "_" + image_ids['frameid'][id])
+    return results
+
+if __name__ == '__main__':
+    
+    faiss_index = faiss.read_index(f"{source}/faiss_index.bin")
+    topk = 5
+
+    # ***Test Search query ***
+    # query = "There is a dog, frame after there is a woman near the tree"
     # ids = search_vector(query, faiss_index, topk)
     # ids_2 = search_vector(query, topk)
     # res_2 = get_vid_frameids(ids_2)
     # print(res_2)
     # res = get_frame_similarity("L02_V018", "0023", 100)
     # print(res)
+    
+    # ***Test Search Image ***
+    image_ids = pd.read_csv(f"{source}/image_ids.csv", dtype={"video": "string", "frameid": "string", "mapping": "int", "pts_time": "float"})
+    image_path = r"F:\AIC2023\dataset\keyframes\L01_V001\10.jpg"
+    image = Image.open(image_path)
+    res = search_image_vector(image_ids, image, faiss_index, topk)
+    print(res)

@@ -32,10 +32,6 @@ const FrameDetails = ({video, frameid, setVidID, onClose }) => {
         }
     }
     
-
-    // console.log("url", video)
-    // console.log("link", watch_url)
-
     const getFramesNear = async (video, frameid) => {
         const response = await fetch(
             `${constant.host_ip}/get_near?video=${video}&frameid=${frameid}`

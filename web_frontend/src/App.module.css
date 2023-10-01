@@ -7,13 +7,14 @@
 }
 
 .search_space {
-    width: 26%;
+    width: 25%;
     height: 100%;
     background-color: #c4f0ce;
 }
 
 .result_space {
     flex: 1;
+    width: 64%;
     height: 100%;
     overflow: auto;
     margin: 0.2rem;
