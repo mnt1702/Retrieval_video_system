@@ -1,1 +1,1 @@
-export const host_ip = "http://192.168.1.101:3000";
+export const host_ip = "http://0.tcp.ap.ngrok.io:19258"

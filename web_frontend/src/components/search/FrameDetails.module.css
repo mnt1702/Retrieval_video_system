@@ -56,6 +56,10 @@
     flex-wrap: wrap;
 }
 
+.frameList > div {
+    width: calc(100%/7);
+}
+
 .imageNearCont {
     text-align: center;
     margin: 2vh 0;
