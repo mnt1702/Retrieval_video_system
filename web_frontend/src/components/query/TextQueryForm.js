@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import NextPageContext from "../store/nextpageCtx";
 import classes from "./TextQueryForm.module.css";
 import * as constant from "../constant"
+import CanvasDraw from "react-canvas-draw";
 
 function TextQueryForm({ setDataList }) {
     const [query, setQuery] = useState("");
@@ -105,18 +106,19 @@ function TextQueryForm({ setDataList }) {
             <form onSubmit={submitTranslateHandler} className={classes.form}>
                 <b> <label>Vietnamese Query</label> </b>
                 <textarea
+                    id='ta-trans'
                     className={classes.inputtrans}
                     onKeyDown={handleKeyDown}
-                    placeholder="Type your query here ..."
+                    placeholder="Nhập câu truy vấn ..."
                     onChange={(e) => setViQuery(e.target.value)}
                     value={viQuery}
                 />
 
-                <button className={classes.scoreBtn}>
+                <button id='trl-btn' className={classes.scoreBtn}>
                     {!isLoadingTranslation ? "Translate" : "Loading ..."}
                 </button>
             </form>
-            <form onSubmit={submitHandler} className={classes.form}>
+            <form id='query-form' onSubmit={submitHandler} className={classes.form}>
                 <b> <label> Search </label> </b>
                 <div>
                     <textarea
@@ -171,28 +173,29 @@ function TextQueryForm({ setDataList }) {
                         value={topk_o}
                     />
                 </div>
-                <button className={classes.scoreBtn}> 
+                <button id='query-btn' className={classes.scoreBtn}> 
                     { !isLoadingSearch ? "Search" : "Loading ..."}
                 </button>
 
-            
-                <b> <label> Search Image </label> </b>
-                <form className={classes.form}>
-                    <input
-                        type="file"
-                        name="file"
-                        onChange={changeHandler}
-                        accept="image/*"
-                        className={classes.fileinput}
-                    />
-                    {console.log("ss")}
-                    {console.log(selectedImage)};
-                    {selectedImage && <img style={{ width: 300, height: 169, marginBottom: 15}} src={URL.createObjectURL(selectedImage)}/>}
-                    <button className={classes.scoreBtn} onClick={handleSubmission}>
-                        Search
-                    </button>
-                </form>            
             </form>
+            <form className={classes.form}>
+                <b> <label> Search Image </label> </b>
+                <div className={classes.img_form_opt}>
+                  <input
+                      type="file"
+                      name="file"
+                      onChange={changeHandler}
+                      accept="image/*"
+                      className={classes.fileinput}
+                  />
+                </div>
+                {console.log("ss")}
+                {console.log(selectedImage)}
+                {selectedImage && <img style={{ width: 300, height: 169, marginBottom: 15}} src={URL.createObjectURL(selectedImage)}/>}
+                <button className={classes.scoreBtn} onClick={handleSubmission}>
+                    Search
+                </button>
+            </form>    
         </div>
     );
 }

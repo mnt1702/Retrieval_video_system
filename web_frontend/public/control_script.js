@@ -22,3 +22,23 @@ d3.select('body')
       v = 12
     document.documentElement.style.setProperty('--list-columns', v);
   })
+
+addEventListener("DOMContentLoaded", evt => {
+  // console.log(evt)
+  d3.select('#ta-trans')
+    .on('keypress', e => {
+      if (e.key != 'Enter')
+        return;
+      e.preventDefault();
+      $("#trl-btn").click()
+    })
+
+  d3.select('#query-form')
+    .selectAll('textarea')
+    .on('keypress', e => {
+      if (e.key != 'Enter')
+        return;
+      e.preventDefault();
+      $("#query-btn").click()
+    })
+});

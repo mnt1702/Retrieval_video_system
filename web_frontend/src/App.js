@@ -21,7 +21,6 @@ function App() {
     return (
         <div className={classes.container}>
             <div id='search' className={classes.search_space}>
-                <Logo />
                 <TextQueryForm setDataList={setDataList} />
 		<span id='note'>Press Tab to focus on the result</span>
             </div><div className={classes.result_space}>

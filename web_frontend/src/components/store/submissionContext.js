@@ -84,7 +84,7 @@ export const SubmissionProvider = ({ children }) => {
         });
 
         setColumns((columns) => {
-            const columnFrameIds = columns["column-1"].frameIds;
+            const columnFrameIds = Array.from(columns["column-1"].frameIds);
             const index = columnFrameIds.indexOf(frameId);
 
             // console.log(index, "INDEX");
@@ -92,10 +92,9 @@ export const SubmissionProvider = ({ children }) => {
                 columnFrameIds.splice(index, 1);
             }
 
-            // console.log(columnFrameIds);
+            // console.log(columns);
 
             const newColumns = {
-                ...columns,
                 ["column-1"]: {
                     ...columns["column-1"],
                     frameIds: columnFrameIds,
@@ -108,6 +107,7 @@ export const SubmissionProvider = ({ children }) => {
 
     const clearSubmissions = () => {
         const frameIds = columns["column-1"].frameIds;
+
         frameIds.forEach((frameId) => {
             deleteFrame(frameId);
         });

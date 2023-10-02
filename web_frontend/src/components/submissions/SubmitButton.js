@@ -10,6 +10,8 @@ function SubmitButton() {
     const [submissionCSV, setSubmissionCSV] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
+    window.submissionCtx = submissionCtx
+
     useEffect(() => {
         const frameIds = submissionCtx.columns["column-1"].frameIds;
         if (frameIds) {
@@ -53,6 +55,7 @@ function SubmitButton() {
 
     const clearSubmissionsHandler = () => {
         submissionCtx.clearSubmissions();
+        setSubmissionCSV(submissionCtx.columns["column-1"].frameIds)
     };
     
     const columns = [
@@ -84,7 +87,6 @@ function SubmitButton() {
                 >
                     <button className={classes.submitBtn} >Export Submission</button>
                 </CsvDownload>
-
             </div>
         )
     );
