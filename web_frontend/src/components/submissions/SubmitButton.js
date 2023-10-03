@@ -65,28 +65,9 @@ function SubmitButton() {
     ]
 
     return (
-        submissionCSV && (
+        (
             <div className={classes.container}>
-                <button
-                    className={classes.clearBtn}
-                    onClick={clearSubmissionsHandler}
-                >
-                    Clear
-                </button>
-
-                <button className={classes.addMappingBtn} onClick={exportSubmission}>
-                    { !isLoading ? "Spam" : "Loading..." }
-                </button>
-
-                <CsvDownload
-                    filename="query-p3-.csv"
-                    separator=","
-                    columns={columns}
-                    datas={submissionCSV}
-                    noHeader={true}
-                >
-                    <button className={classes.submitBtn} >Export Submission</button>
-                </CsvDownload>
+                <button className={classes.submitBtn} >Submit</button>
             </div>
         )
     );

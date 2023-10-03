@@ -13,17 +13,19 @@ const VideoModal = ({open, setOpen, video_id, setVidID}) => {
     }, [video_id]);
     return (
         <Modal open={open} onClose={handleClose} backdrop="true" size="full" >
+            <Modal.Header>
+                <Button appearance="primary">
+                    Submit
+                </Button><Button onClick={handleClose} appearance="primary">
+                    Exit
+                </Button>
+
+            </Modal.Header>
             <Modal.Body>
                 
                 <FrameDetails video={video} frameid={frameid} setVidID={setVidID} onClose={handleClose}/>
                 
             </Modal.Body>
-            <Modal.Footer>
-                <Button onClick={handleClose} appearance="primary">
-                    Ok
-                </Button>
-
-            </Modal.Footer>
         </Modal>
     );
 };

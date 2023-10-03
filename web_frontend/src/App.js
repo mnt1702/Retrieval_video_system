@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import TextQueryForm from "./components/query/TextQueryForm";
 import classes from "./App.module.css";
 import Logo from "./components/query/Logo";
@@ -9,6 +9,7 @@ import "../node_modules/rsuite/dist/rsuite.min.css";
 import SubmissionList from "./components/submissions/SubmissionList";
 import SubmitButton from "./components/submissions/SubmitButton";
 import NextPageContext from "./components/store/nextpageCtx";
+import SubmissionContext from "./components/store/submissionContext";
 
 
 function App() {
@@ -16,6 +17,17 @@ function App() {
     const [openModal, setOpenModal] = useState(false);
     const [openedVidID, setOpenedVidID] = useState("");
     const nextpageCtx = useContext(NextPageContext);
+    const submitCtx = useContext(SubmissionContext)
+
+    function fetchSession() {
+      // const session_id = await fetch(`${constant.host_ip}/get_sessionId`)
+
+      submitCtx.setSession('dummy')
+    }
+
+    useEffect(() => {
+      fetchSession()
+    })
 
 
     return (
@@ -23,16 +35,19 @@ function App() {
             <div id='search' className={classes.search_space}>
                 <TextQueryForm setDataList={setDataList} />
 		<span id='note'>Press Tab to focus on the result</span>
-            </div><div className={classes.result_space}>
-                <ImageList
-                    dataList={dataList}
-                    setDataList={setDataList}
-                    setOpen={setOpenModal}
-                    setOpenedVidID={setOpenedVidID}
-                />
-            </div><div id='submission' className={classes.submission_space}>
-                <SubmissionList />
-                <SubmitButton />
+            </div>
+            <div id='submission'>
+              <div className={classes.result_space}>
+                  <ImageList
+                      dataList={dataList}
+                      setDataList={setDataList}
+                      setOpen={setOpenModal}
+                      setOpenedVidID={setOpenedVidID}
+                  />
+              </div><div className={classes.submission_space}>
+                  <SubmissionList />
+                  <SubmitButton />
+              </div>
             </div>
             <VideoModal
                 open={openModal}

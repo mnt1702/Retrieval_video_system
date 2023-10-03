@@ -1,0 +1,19 @@
+.container {
+  display: flex;
+  flex: 1;
+}
+
+.container > div {
+  display: flex;
+  align-items: center;
+  margin: 0 2vw;
+  flex-grow: 1;
+}
+
+.container label {
+  margin-right: 3%;
+}
+
+.container input[name='sessionid'] {
+  width: 20em;
+}

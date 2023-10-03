@@ -1,58 +1,18 @@
 .container {
-    position: absolute;
-    bottom: 0;
     width: fit-content;
     display: flex;
     flex-direction: column;
-
+    width: 15%;
+    margin: 0 2vw;
 }
 
 .submitBtn{
     text-decoration: none;
     background-color: lightblue;
-    margin: 1rem 2.5rem;
-    padding: 1rem;
-    border-radius: 20px;
+    padding: .5rem;
+    border-radius: 1vh;
 }
 
 .submitBtn:hover {
     background-color: rgb(154, 148, 234);
-}
-
-.addSpamBtn{
-    text-decoration: none;
-    background-color: lightblue;
-    margin: 0 2.5rem;
-    margin-top: 1rem;
-    padding: 1rem;
-    border-radius: 20px;
-}
-
-.addSpamBtn:hover {
-    background-color: rgb(154, 148, 234);
-}
-
-.addMappingBtn{
-    text-decoration: none;
-    background-color: lightblue;
-    margin: 0 2.5rem;
-    margin-top: 1rem;
-    padding: 1rem;
-    border-radius: 20px;
-}
-
-.addMappingBtn:hover {
-    background-color: rgb(154, 148, 234);
-}
-
-.clearBtn {
-    margin: 0 2.5rem;
-    padding: 1rem;
-    border-radius: 20px;
-    background-color: #dd4c69;
-    color: white;
-}
-
-.clearBtn:hover {
-    background-color: crimson;
 }

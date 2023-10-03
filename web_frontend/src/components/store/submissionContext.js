@@ -3,11 +3,13 @@ import React, { useEffect, useState } from "react";
 const SubmissionContext = React.createContext({
     submittedFrames: {},
     columns: {},
+    submittedFrame: {},
     columnsOrder: [],
     submitFrame: () => {},
     removeFrame: () => {},
     updateFramesId: () => {},
     clearSubmissions: () => {},
+    setSession: () => {}
 });
 
 export default SubmissionContext;
@@ -29,46 +31,27 @@ export const SubmissionProvider = ({ children }) => {
               }
     );
     const [columnsOrder, setColumnsOrder] = useState(["column-1"]);
+    const [submittedFrame, setSubmittedFrame] = useState({
+      video: "",
+      frame_id: "",
+      session_id: ""
+    })
 
     const submitFrame = (video, frameid) => {
-        if (`${video}_${frameid}` in submittedFrames) {
-            alert("Frame Already submitted");
-        } else {
-            setSubmittedFrames((submittedFrames) => {
-                const newSubmittedFrames = {
-                    ...submittedFrames,
-                    [`${video}_${frameid}`]: {
-                        id: `${video}_${frameid}`,
-                        video: video,
-                        frameid: frameid,
-                    },
-                };
-                localStorage.setItem(
-                    "submittedFrames",
-                    JSON.stringify(newSubmittedFrames)
-                );
-                return newSubmittedFrames;
-            });
-
-            setColumns((columns) => {
-                const columnFrameIds = columns["column-1"].frameIds;
-                const newColumnFrameIds = [
-                    ...columnFrameIds,
-                    `${video}_${frameid}`,
-                ];
-
-                const newColumns = {
-                    ...columns,
-                    "column-1": {
-                        ...columns["column-1"],
-                        frameIds: newColumnFrameIds,
-                    },
-                };
-                localStorage.setItem("columns", JSON.stringify(newColumns));
-                return newColumns;
-            });
-        }
+      setSubmittedFrame({
+        video: video,
+        frame_id: frameid,
+        session_id: submittedFrame.session_id
+      })
     };
+
+    const setSession = session => {
+      setSubmittedFrame({
+        video: submittedFrame.video,
+        frame_id: submittedFrame.frame_id,
+        session_id: session
+      })
+    }
 
     const deleteFrame = (frameId) => {
         setSubmittedFrames((submittedFrames) => {
@@ -133,11 +116,13 @@ export const SubmissionProvider = ({ children }) => {
     const contextData = {
         submittedFrames: submittedFrames,
         columns: columns,
+        submittedFrame: submittedFrame,
         columnsOrder: columnsOrder,
         submitFrame: submitFrame,
         removeFrame: deleteFrame,
         updateFramesId: updateSubmittedFramesId,
         clearSubmissions: clearSubmissions,
+        setSession: setSession
     };
 
     return (

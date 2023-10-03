@@ -1,15 +1,20 @@
 .container {
     width: 100%;
     height: 100%;
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: 27% auto;
     background-color: #2a302c;
 }
 
 .search_space {
-    width: 27%;
+    width: 100%;
     height: 100%;
     background-color: #c4f0ce;
+}
+
+.container > div:nth-of-type(2) {
+    display: grid;
+    grid-template-rows: auto 3.5rem;
 }
 
 .result_space {
@@ -21,12 +26,14 @@
 }
 
 .submission_space {
-    width: 15%;
-    background-color: #c4f0ce;
+    width: 100%;
+    background-color: #ddd;
+    display: flex;
+    align-items: center;
 }
 
-.submission_space h3 {
-    text-align: center;
+.submission_splace > div {
+    flex: 1;
 }
 
 .logo {
