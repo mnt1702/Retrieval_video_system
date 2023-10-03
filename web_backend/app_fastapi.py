@@ -25,6 +25,7 @@ from translation_vin import *
 import cv2 as cv
 from deep_translator import GoogleTranslator
 from typing import Annotated
+from get_sessionid import *
 
 app = FastAPI()
 
@@ -180,6 +181,8 @@ async def get_remapping(results: resultsConfig):
 
 @app.post("/submissions")
 async def get_submission(results: resultsConfig):
+    if len(results.data) == 0:
+        return JSONResponse({"data": []})
     topk = round(100 / (2 * len(list(results.data)))) - 1
     map_results = []
     for res_id in results.data:
@@ -227,6 +230,11 @@ async def get_thumbnail(video: str, frameid: str, width: Optional[int] = 170, he
 async def search_images(image, topk: Optional[int] = 100):
     results = search_image_vector(image_ids, image, faiss_index, topk)
     return JSONResponse({"data": results})
+
+@app.get("/session_id")
+async def session_id():
+    sessionId = get_sessionId("haidikichi", "Cheecea0")
+    return JSONResponse({"session_id": sessionId})
 
 if __name__ == '__main__':
     uvicorn.run("app_fastapi:app", host="0.0.0.0", port=3000, reload=True)
