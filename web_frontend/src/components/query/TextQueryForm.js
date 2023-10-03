@@ -175,26 +175,21 @@ function TextQueryForm({ setDataList }) {
                 </div>
                 <button id='query-btn' className={classes.scoreBtn}> 
                     { !isLoadingSearch ? "Search" : "Loading ..."}
-                </button>
-
-            </form>
-            <form className={classes.form}>
+                </button>            
                 <b> <label> Search Image </label> </b>
-                <div className={classes.img_form_opt}>
-                  <input
-                      type="file"
-                      name="file"
-                      onChange={changeHandler}
-                      accept="image/*"
-                      className={classes.fileinput}
-                  />
-                </div>
-                {console.log("ss")}
-                {console.log(selectedImage)}
-                {selectedImage && <img style={{ width: 300, height: 169, marginBottom: 15}} src={URL.createObjectURL(selectedImage)}/>}
-                <button className={classes.scoreBtn} onClick={handleSubmission}>
-                    Search
-                </button>
+                <form className={classes.form}>
+                    <input
+                        type="file"
+                        name="file"
+                        onChange={changeHandler}
+                        accept="image/*"
+                        className={classes.fileinput}
+                    />
+                    {/* {selectedImage && <img style={{ width: 300, height: 169, marginBottom: 15}} src={URL.createObjectURL(selectedImage)}/>} */}
+                    <button className={classes.scoreBtn} onClick={handleSubmission}>
+                        Search
+                    </button>
+                </form>            
             </form>    
         </div>
     );
