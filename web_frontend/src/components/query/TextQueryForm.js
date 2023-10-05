@@ -2,7 +2,6 @@ import React, { useContext, useState } from "react";
 import NextPageContext from "../store/nextpageCtx";
 import classes from "./TextQueryForm.module.css";
 import * as constant from "../constant"
-import CanvasDraw from "react-canvas-draw";
 
 function TextQueryForm({ setDataList }) {
     const [query, setQuery] = useState("");
@@ -135,12 +134,12 @@ function TextQueryForm({ setDataList }) {
                         value={topk}
                     />
                 </div>
-                <b> <label> Speak Query </label> </b>
+                <b> <label> Youtube caption  </label> </b>
                 <div>
                     <textarea
                         className={classes.inputquery}
                         onKeyDown={handleKeyDown}
-                        placeholder="Speak query"
+                        placeholder="Youtube caption"
                         onChange={(e) => setSpeakQuery(e.target.value)}
                         value={speakQuery}
                     />
@@ -176,7 +175,7 @@ function TextQueryForm({ setDataList }) {
                 <button id='query-btn' className={classes.scoreBtn}> 
                     { !isLoadingSearch ? "Search" : "Loading ..."}
                 </button>            
-                <b> <label> Search Image </label> </b>
+                <b> <label> Search Image </label> </b>  
                 <form className={classes.form}>
                     <input
                         type="file"
@@ -185,9 +184,8 @@ function TextQueryForm({ setDataList }) {
                         accept="image/*"
                         className={classes.fileinput}
                     />
-                    {/* {selectedImage && <img style={{ width: 300, height: 169, marginBottom: 15}} src={URL.createObjectURL(selectedImage)}/>} */}
                     <button className={classes.scoreBtn} onClick={handleSubmission}>
-                        Search
+                        {!isLoadingSearchImg ? "Search" : "Loading..."}
                     </button>
                 </form>            
             </form>    

@@ -49,15 +49,15 @@ const SubmissionList = () => {
       <div className={classes.container}>
         <div>
           <label>Video:</label>
-          <span name='video'>{submissionCtx.submittedFrame.video}</span>
+          <input type="text" name='video' value= {submissionCtx.submittedFrame.video}></input>
         </div>
         <div>
           <label>Frame:</label>
-          <input type="number" name="frameid" min="0" max='999999' value="{submissionCtx.submittedFrame.frame_id}"></input>
+          <input type="number" name="frameid" min="0" max='999999' value= {submissionCtx.submittedFrame.frame_id}></input>
         </div>
         <div>
           <label>Session:</label>
-          <input type="text" name="sessionid" value="{submissionCtx.submittedFrame.session_id}"></input>
+          <input type="text" name="sessionid" value= {submissionCtx.submittedFrame.session_id}></input>
         </div>
       </div>
     );

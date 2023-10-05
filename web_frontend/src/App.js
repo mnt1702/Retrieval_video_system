@@ -10,6 +10,7 @@ import SubmissionList from "./components/submissions/SubmissionList";
 import SubmitButton from "./components/submissions/SubmitButton";
 import NextPageContext from "./components/store/nextpageCtx";
 import SubmissionContext from "./components/store/submissionContext";
+import * as constant from "./components/constant"
 
 
 function App() {
@@ -19,15 +20,17 @@ function App() {
     const nextpageCtx = useContext(NextPageContext);
     const submitCtx = useContext(SubmissionContext)
 
-    function fetchSession() {
-      // const session_id = await fetch(`${constant.host_ip}/get_sessionId`)
-
-      submitCtx.setSession('dummy')
+    const  fetchSession = async () => {
+        console.log(`${constant.host_ip}/get_sessionId`)
+    //     const response = await fetch(`${constant.host_ip}/get_sessionId`)
+    //     if(response.ok) {
+    //         let data = await response.json
+    //         submitCtx.setSession(data.session_id)
+    //     }
+    // }
+    // useEffect(() => {
+    //   fetchSession()
     }
-
-    useEffect(() => {
-      fetchSession()
-    })
 
 
     return (

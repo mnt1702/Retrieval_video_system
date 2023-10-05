@@ -5,7 +5,7 @@ import os
 import faiss
 import io
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile
 import json
 import sys
 import math
@@ -13,7 +13,7 @@ sys.path.append("web_backend")
 from search import *
 from object_detection import *
 from utils import *
-from ocr import *
+# from ocr import *
 from typing import Optional, List, Dict
 from fastapi.responses import JSONResponse, FileResponse, StreamingResponse
 from pydantic import BaseModel
@@ -26,6 +26,8 @@ import cv2 as cv
 from deep_translator import GoogleTranslator
 from typing import Annotated
 from get_sessionid import *
+import requests
+from es import *
 
 app = FastAPI()
 
@@ -78,16 +80,16 @@ async def get_frame_from_query(query: Optional[str] = None, topk: Optional[int] 
 
     if not query and ocrquery:
         results = []
-        results = search_ocr_all(ocrquery, infos, ocrthresh, topk_o)        
+        results = search_ocr(ocrquery, image_ids, ocrthresh, topk_s, index_name="ocr", mode="all")
     if query and not ocrquery:
         results = []
         results = search_vector(image_ids, faiss_index= faiss_index, topk= topk, query= query)
     if query and ocrquery:
         if not ocrthresh: 
             ocrthresh = 0.8
-        candiates = []
-        candiates = search_vector(image_ids, faiss_index= faiss_index, topk= max(topk, topk_o), query= query)
-        results = search_ocr(ocrquery, candiates, infos, ocrthresh, max(topk, topk_o))
+        candidates = []
+        candidates = search_vector(image_ids, faiss_index= faiss_index, topk= max(topk, topk_o), query= query)
+        results = search_ocr(ocrquery, candidates , ocrthresh, topk_s, index_name="ocr", mode="combine")
     flag = False
     if query or ocrquery:
         flag = True
@@ -110,7 +112,7 @@ async def get_metadata(video: str, frameid: str):
     return JSONResponse({"error": "No youtube link"})
 
 
-@app.get('/get_image')
+@app.get('/get_image_old')
 async def get_image(video: str, frameid: str):
     file_path = os.path.join(f"{source}/keyframes", video, frameid + ".jpg")
     image = Image.open(file_path)
@@ -179,7 +181,7 @@ async def get_remapping(results: resultsConfig):
         remap_results.append(video + '_'+ str(frameid))
     return JSONResponse({"data": remap_results})
 
-@app.post("/submissions")
+@app.post("/submissions_b1")
 async def get_submission(results: resultsConfig):
     if len(results.data) == 0:
         return JSONResponse({"data": []})
@@ -214,27 +216,40 @@ async def get_trans(vi_query: Optional[str] = None):
 
     return JSONResponse({"trans_en": en_query})   
 
-@app.get("/get_thumbnail")
-async def get_thumbnail(video: str, frameid: str, width: Optional[int] = 170, height: Optional[int] = 96):
+@app.get("/get_image")
+async def get_image(video: str, frameid: str, width: Optional[int] = 144, height: Optional[int] = 81, mode= "origin"):
     file_path = os.path.join(f"{source}/keyframes", video, frameid + ".jpg")
     if os.path.exists(file_path):
         image = Image.open(file_path)
-        image.thumbnail((width, height))
+        if mode == "thumbnail":
+            image.thumbnail((width, height))
         imgio = io.BytesIO()
         image.save(imgio, 'JPEG')
         imgio.seek(0)
         return StreamingResponse(content = imgio, media_type="image/jpeg")
     return {"error": "File does not exist"}
 
-@app.get("/search_images")
-async def search_images(image, topk: Optional[int] = 100):
-    results = search_image_vector(image_ids, image, faiss_index, topk)
-    return JSONResponse({"data": results})
-
-@app.get("/session_id")
-async def session_id():
+@app.get("/get_sessionId")
+async def get_sessionId():
     sessionId = get_sessionId("haidikichi", "Cheecea0")
     return JSONResponse({"session_id": sessionId})
+
+@app.get("/submission_final")
+async def submission_final(video: str, frame_id: str, session_id: str):
+    URL = f"https://eventretrieval.one/api/v1/submit?item={video}&frame={frame_id}&session={session_id}"
+    r = requests.get(url=URL)
+    data = r.text
+    return JSONResponse(data)
+
+
+@app.post("/search_image")
+async def create_upload_file(file: UploadFile, topk: Optional[int] = 100):
+    request_object_content = await file.read()
+    image = Image.open(io.BytesIO(request_object_content))
+    image.thumbnail((640, 360))
+    results = search_image_vector(image_ids, image, faiss_index, topk)
+    return JSONResponse({"results": results})
+
 
 if __name__ == '__main__':
     uvicorn.run("app_fastapi:app", host="0.0.0.0", port=3000, reload=True)

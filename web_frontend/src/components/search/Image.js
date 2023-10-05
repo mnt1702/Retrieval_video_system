@@ -56,7 +56,7 @@ const Image = ({
             >
             <img
                 className={classes.image}
-                src={`${constant.host_ip}/get_thumbnail?video=${video}&frameid=${frameid}`}
+                src={`${constant.host_ip}/get_image?video=${video}&frameid=${frameid}&mode="thumbnail"`}
                 alt="frameid"
                 onClick={() => {
                     setOpen(true);

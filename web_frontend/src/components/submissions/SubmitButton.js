@@ -20,10 +20,11 @@ function SubmitButton() {
     }, [submissionCtx.columns["column-1"].frameIds]);
 
     const exportSubmission = () => {
+        console.log(`${constant.host_ip}/submissions_b1`)
         const similarity = async () => {
             setIsLoading(true);
             const response = await fetch(
-                `${constant.host_ip}/submissions`,
+                `${constant.host_ip}/submissions_b1`,
                 {
                     method: "POST",
                     "headers": {"Content-Type": "application/json"},
@@ -51,6 +52,24 @@ function SubmitButton() {
             setIsLoading(false);
         };
         similarity();
+    }
+
+    const submission = () => {
+        const fetch_submit = async () => {
+            setIsLoading(true);
+            let video = submissionCtx.submittedFrame.video
+            let frame_id = submissionCtx.submittedFrame.frame_id
+            let session_id = submissionCtx.submittedFrame.session_id
+
+            const response = await fetch(`${constant.host_ip}/submission_final?video=${video}&frameid=${frame_id}&session_id=${session_id}`);
+            if (response.ok) {
+                const data = await response.json()
+                window.alert(data)
+                console.log(data)
+            }
+            setIsLoading(false);
+        };
+        fetch_submit();
     }
 
     const clearSubmissionsHandler = () => {

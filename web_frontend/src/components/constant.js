@@ -1,1 +1,1 @@
-export const host_ip = "http://192.168.0.236:3000";
+export const host_ip = "http://127.0.0.1:3000";

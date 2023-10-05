@@ -12,6 +12,6 @@ def get_sessionId(username, password):
     return infos["sessionId"]
 
 
-if __name__ == '__main__':
-    sessionId = get_sessionId("haidikichi", "Cheecea0")
-    print(sessionId)
+# if __name__ == '__main__':
+#     sessionId = get_sessionId("haidikichi", "Cheecea0")
+#     print(sessionId)

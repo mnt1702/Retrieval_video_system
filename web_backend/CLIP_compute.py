@@ -25,19 +25,19 @@ def compute_image_clip_feature(img):
         img_feature = model.encode_image(image)
         # img_feature /= img_feature.norm(dim=-1, keepdim=True)
     return img_feature.cpu().numpy()
-if __name__ == '__main__':
-    # test 
-    path = f'{source}\\keyframes\\L01_V001\\88.jpg'
-    image = Image.open(path)
-    im = image.copy()
-    im.thumbnail((640, 360))
-    print(image)
-    print(im)
-    fe1 = compute_image_clip_feature(image)
-    fe2 = compute_image_clip_feature(im)
-    print(np.linalg.norm(fe1 - fe2))
-    print(np.dot(fe1.reshape(-1), fe2.reshape(-1))/(np.linalg.norm(fe1)*np.linalg.norm(fe2)))
-    print(fe1)
-    print("--------------------------")
-    print(fe1 - fe2)
+# if __name__ == '__main__':
+#     # test 
+#     path = f'{source}\\keyframes\\L01_V001\\88.jpg'
+#     image = Image.open(path)
+#     im = image.copy()
+#     im.thumbnail((640, 360))
+#     print(image)
+#     print(im)
+#     fe1 = compute_image_clip_feature(image)
+#     fe2 = compute_image_clip_feature(im)
+#     print(np.linalg.norm(fe1 - fe2))
+#     print(np.dot(fe1.reshape(-1), fe2.reshape(-1))/(np.linalg.norm(fe1)*np.linalg.norm(fe2)))
+#     print(fe1)
+#     print("--------------------------")
+#     print(fe1 - fe2)
 

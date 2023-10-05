@@ -5,6 +5,7 @@ import clip
 import torch
 from constant import *
 from PIL import Image
+from constant import *
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model, preprocess = clip.load("ViT-B/32", device=device)
@@ -20,7 +21,7 @@ def get_frame_feature_vector(video, frameids):
     image_ids = list(zip(image_ids['video'], image_ids["frameid"]))
     
     img_idx = image_ids.index((video, frameids))
-    image_clipfeatures = np.load("F:/AIC2023/dataset/clip_embeddings.npy")
+    image_clipfeatures = np.load(f"{source}/clip_embeddings.npy")
 
     image_feature = image_clipfeatures[img_idx].astype(np.float64)
 
@@ -80,10 +81,10 @@ def search_image_vector(image_ids, image, faiss_index, topk):
         results.append(image_ids['video'][id] + "_" + image_ids['frameid'][id])
     return results
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
     
-    faiss_index = faiss.read_index(f"{source}/faiss_index.bin")
-    topk = 5
+#     faiss_index = faiss.read_index(f"{source}/faiss_index.bin")
+#     topk = 5
 
     # ***Test Search query ***
     # query = "There is a dog, frame after there is a woman near the tree"
@@ -95,8 +96,8 @@ if __name__ == '__main__':
     # print(res)
     
     # ***Test Search Image ***
-    image_ids = pd.read_csv(f"{source}/image_ids.csv", dtype={"video": "string", "frameid": "string", "mapping": "int", "pts_time": "float"})
-    image_path = r"F:\AIC2023\dataset\keyframes\L01_V001\10.jpg"
-    image = Image.open(image_path)
-    res = search_image_vector(image_ids, image, faiss_index, topk)
-    print(res)
+    # image_ids = pd.read_csv(f"{source}/image_ids.csv", dtype={"video": "string", "frameid": "string", "mapping": "int", "pts_time": "float"})
+    # image_path = r"F:\AIC2023\dataset\keyframes\L01_V001\10.jpg"
+    # image = Image.open(image_path)
+    # res = search_image_vector(image_ids, image, faiss_index, topk)
+    # print(res)
