@@ -176,7 +176,8 @@ function TextQueryForm({ setDataList }) {
                     { !isLoadingSearch ? "Search" : "Loading ..."}
                 </button>            
                 <b> <label> Search Image </label> </b>  
-                <form className={classes.form}>
+            </form>    
+	    <form id='image-form' className={classes.form}>
                     <input
                         type="file"
                         name="file"
@@ -187,8 +188,7 @@ function TextQueryForm({ setDataList }) {
                     <button className={classes.scoreBtn} onClick={handleSubmission}>
                         {!isLoadingSearchImg ? "Search" : "Loading..."}
                     </button>
-                </form>            
-            </form>    
+                </form>
         </div>
     );
 }

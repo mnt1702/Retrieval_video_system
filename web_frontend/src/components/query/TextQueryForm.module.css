@@ -30,6 +30,11 @@
     background-color: #dce8df;
 }
 
+input[name='file'] {
+  margin-bottom: 2vh;
+  text-align: center;
+}
+
 .inputnum {
     width: 20%;
     resize: none;
