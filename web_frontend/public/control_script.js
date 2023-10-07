@@ -2,13 +2,33 @@ function toggleClass(d3obj, name) {
   d3obj.classed(name, !d3obj.classed(name))
 }
 
+function toggleFocus() {
+  e.preventDefault()
+  toggleClass(d3.select('#search'), 'hidden');
+  toggleClass(d3.select('#submission'), 'hidden');
+}
+
 d3.select('body')
   .on('keydown', e => {
-    if (e.code != 'Space' || !e.shiftKey)
-      return;
-    e.preventDefault();
-    toggleClass(d3.select('#search'), 'hidden');
-    toggleClass(d3.select('#submission'), 'hidden');
+    if (e.code == 'Space' && e.shiftKey)
+      toggleFocus();
+    if (e.code == "ArrowLeft" || e.code == 'ArrowRight') {
+      let list = d3.select('#img_near')
+      if (list.empty())
+        return;
+      e.preventDefault()
+      let imgs = list.selectAll('img')
+        .filter((d, i) => i == 4 || i == 6)
+        .nodes()
+      
+      if (e.code == "ArrowLeft")
+        $(imgs[0]).click()
+      else
+        $(imgs[1]).click()
+    }
+    if (e.code == 'Enter' && d3.select('button[name="submitBtn"]')) {
+      $('button[name="submitBtn"]').click()
+    }
   })
   .on('wheel', e => {
     if (!e.shiftKey)

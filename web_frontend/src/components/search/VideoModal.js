@@ -28,7 +28,7 @@ const VideoModal = ({open, setOpen, video_id, setVidID}) => {
     return (
         <Modal open={open} onClose={handleClose} backdrop="true" size="full" >
             <Modal.Header>
-                <Button appearance="primary" onClick={submitFrame}>
+                <Button name='submitBtn' appearance="primary" onClick={submitFrame}>
                     Submit
                 </Button>
 

@@ -195,7 +195,7 @@ function TextQueryForm({ setDataList }) {
                       { !isLoadingSearch ? "Search" : "Loading"}
                   </button>
                   <div>
-                    <input type="checkbox" value={imgSearch} onChange={((e) => (setImgSearch(e.target.checked), window.imgSearch=e.target.checked))}></input>
+                    <input type="checkbox" value={imgSearch} name='imgSearchCbx' onChange={((e) => setImgSearch(e.target.checked))}></input>
                     <label><b> Use image </b></label>
                   </div>
                 </div>

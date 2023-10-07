@@ -85,7 +85,7 @@ const FrameDetails = ({video, frameid, setVidID, onClose }) => {
                     </div>
                     <div className={classes.imageNearCont}>
                         <h4> Nearby frames </h4>
-                        <div className={classes.imageNearList}>
+                        <div id='img_near' className={classes.imageNearList}>
                             {framesNear.map((item) => (
                                 <Image 
                                     video={item.slice(0, 8)}

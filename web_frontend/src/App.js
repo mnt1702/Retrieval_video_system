@@ -52,6 +52,7 @@ function App() {
               </div>
             </div>
             <VideoModal
+                id='video_model' 
                 open={openModal}
                 setOpen={setOpenModal}
                 video_id={openedVidID}
