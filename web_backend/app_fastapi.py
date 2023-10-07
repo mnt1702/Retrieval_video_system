@@ -11,7 +11,6 @@ import sys
 import math
 sys.path.append("web_backend")
 from search import *
-from object_detection import *
 from utils import *
 # from ocr import *
 from typing import Optional, List, Dict
@@ -44,6 +43,10 @@ app.add_middleware(
 # tokenizer_vi2en = AutoTokenizer.from_pretrained("vinai/vinai-translate-vi2en", src_lang="vi_VN")
 # model_vi2en = AutoModelForSeq2SeqLM.from_pretrained("vinai/vinai-translate-vi2en")
 
+
+f = open(f'{source}/captions.json', encoding="utf8")
+caption = json.load(f)
+f.close()
 #OCR
 infos = get_all_ocr_infos(f"{source}/OCR.csv")
 #Caption
@@ -51,20 +54,13 @@ f = open(f'{source}/captions.json', encoding="utf8")
 caption = json.load(f)
 f.close()
 
+#CLIP feature
+image_clipfeatures = np.load(f"{source}/clip_embeddings.npy")
 #Faiss index
 faiss_index = faiss.read_index(f"{source}/faiss_index.bin")
-# if torch.cuda.is_available(): faiss_index = faiss.index_cpu_to_all_gpus(faiss_index)
-
 #Image index
-image_ids = pd.read_csv(f"{source}/image_ids.csv", dtype={"video": "string", "frameid": "string", "mapping": "int", "pts_time": "float"})
+image_ids = pd.read_csv(f"{source}/image_ids.csv", dtype={"video": "string", "frameid": "string", "url": "string"})
 info_ids = list(zip(image_ids["video"], image_ids["frameid"]))
-#Remapping
-reinfo_ids = list(zip(image_ids["video"], image_ids["mapping"]))
-frame_idx = list(image_ids["frameid"])
-#Mapping
-map_idx = list(image_ids["mapping"])
-#Pts time
-pts_time = list(image_ids["pts_time"])
 
 @app.get('/')
 async def introduce():
@@ -95,91 +91,38 @@ async def get_frame_from_query(query: Optional[str] = None, topk: Optional[int] 
         flag = True
 
     if flag  == False and speakquery:
-        candiates = get_vid_frameids(image_ids, list(range(max_size)))
-        results = find_text(speakquery, candiates, topk_s, "all")
+        candiates = list(image_ids['video'])
+        results = find_text(caption, speakquery, candiates, topk_s, "all")
     elif flag and speakquery:
-        results = find_text(speakquery, results, topk_s, "res")
+        results = find_text(caption, speakquery, results, topk_s, "res")
     return JSONResponse({"data": results})
 
 @app.get('/get_metadata')
 async def get_metadata(video: str, frameid: str):
-    path = f"{source}/metadata/{video}.json"
-    with open(path, "r", encoding='utf-8', errors='ignore') as jsonfile:
-        metadata = json.load(jsonfile)
-    if metadata:
-        pts_t = pts_time[info_ids.index((video, frameid))]
-        return JSONResponse({"url": f"""{metadata["watch_url"].replace('watch?v=', 'embed/')}?start={round(pts_t)}&autoplay=0""" })
-    return JSONResponse({"error": "No youtube link"})
-
-
-@app.get('/get_image_old')
-async def get_image(video: str, frameid: str):
-    file_path = os.path.join(f"{source}/keyframes", video, frameid + ".jpg")
-    image = Image.open(file_path)
-    imgio = io.BytesIO()
-    image.save(imgio, 'JPEG')
-    imgio.seek(0)
-    if os.path.exists(file_path):
-        return StreamingResponse(content = imgio, media_type="image/jpeg")
-    
-    return {"error": "File does not exist"}
-
-@app.get("/get_video")
-async def get_frame_video(video: str):
-    image_ids_l = list(zip(image_ids['video'], image_ids['frameid']))
-
-    results = []
-    for vid, fr in image_ids_l:
-        if vid == video:
-            results.append(vid + '_' + fr)
-
-    return JSONResponse({'data': results})
+    url = image_ids['url'][info_ids.index((video, frameid))]
+    return JSONResponse({"url": url })
 
 @app.get("/get_near")
 async def get_frame_near(video: str, frameid: str):
     idx = info_ids.index((video, frameid))
-    frameNear = [idx]
-    for i in range(1, 21):
+    frameNear = [video + '_' + image_ids['frameid'][idx]]
+    for i in range(1, 11):
         if image_ids['video'][idx + i] == video:
-            frameNear.append(idx + i)
+            frameNear.append(video + '_' + image_ids['frameid'][idx + i])
         if idx > i and image_ids['video'][idx - i] == video:
-            frameNear.append(idx - i)
+            frameNear.append(video + '_' + image_ids['frameid'][idx - i])
         if(len(frameNear) >= 11): break
-    frameNear = sorted(frameNear)
-    results = get_vid_frameids(image_ids, frameNear)
-    return JSONResponse({'data': results})
-
-@app.get("/check_obj_det")
-async def check_object_detection(video: str, frameid: str, cls: str, score: float):
-    return {"check": check_object(video, frameid, cls, score)}
+    frameNear.sort(key = lambda x: int(x[9:]))
+    return JSONResponse({'data': frameNear})
 
 @app.get("/get_similarity")
 async def get_similarity(video: str, frameid: str, topk: Optional[int] = 100):
-    results = get_frame_similarity(image_ids, video, frameid, topk)
+    results = get_frame_similarity(image_ids, info_ids, video, frameid, faiss_index, image_clipfeatures, topk)
     return {"data": results}   
 
 class resultsConfig(BaseModel):
     data: List[str]
 
-@app.post("/mapping")
-async def get_mapping(results: resultsConfig):
-    map_results = []
-    for res_id in results.data:
-        video = res_id[:8]
-        frameid = res_id[9:]
-        id = map_idx[info_ids.index((video, frameid))]
-        map_results.append(video + '_'+ str(id))
-    return JSONResponse({"data": map_results})
-
-@app.post("/remapping")
-async def get_remapping(results: resultsConfig):
-    remap_results = []
-    for res_id in results.data:
-        video = res_id[:8]
-        id = res_id[9:]
-        frameid = frame_idx[reinfo_ids.index((video, id))]
-        remap_results.append(video + '_'+ str(frameid))
-    return JSONResponse({"data": remap_results})
 
 @app.post("/submissions_b1")
 async def get_submission(results: resultsConfig):
@@ -190,7 +133,6 @@ async def get_submission(results: resultsConfig):
     for res_id in results.data:
         video = res_id[:8]
         frameid = res_id[9:]
-        id = map_idx[info_ids.index((video, frameid))]
         map_results.append(video + '_'+ str(id))
     
     for res_id in map_results:
@@ -218,7 +160,7 @@ async def get_trans(vi_query: Optional[str] = None):
 
 @app.get("/get_image")
 async def get_image(video: str, frameid: str, width: Optional[int] = 144, height: Optional[int] = 81, mode= "origin"):
-    file_path = os.path.join(f"{source}/keyframes", video, frameid + ".jpg")
+    file_path = os.path.join(f"{source}/keyframes", video[:3], video, frameid + ".jpg")
     if os.path.exists(file_path):
         image = Image.open(file_path)
         if mode == "thumbnail":

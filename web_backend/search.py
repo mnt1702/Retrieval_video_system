@@ -49,14 +49,13 @@ def get_vid_frameids(image_ids, ids):
         res.append(image_ids['video'][i] + "_" + image_ids['frameid'][i])
     return res
 
-def get_frame_similarity(image_ids, video, frameid, topk):
-    frame_feature_vector = get_frame_feature_vector(video, frameid)
+def get_frame_similarity(image_ids, info_ids, video, frameid, faiss_index, image_clipfeatures, topk):
+    img_idx = info_ids.index((video, frameid))
+
+    frame_feature_vector = image_clipfeatures[img_idx].astype(np.float64)
+    frame_feature_vector = np.expand_dims(frame_feature_vector, axis=0)
     
-    faiss_index = faiss.read_index(f"{source}/faiss_index.bin")
-    
-    f_dist, f_ids = faiss_index.search(frame_feature_vector, topk + 1)
-    faiss_index.reset()
-    
+    f_dist, f_ids = faiss_index.search(frame_feature_vector, topk + 1)    
     f_ids = np.array(f_ids[0])
     results = []
     for id in f_ids[1:]:
