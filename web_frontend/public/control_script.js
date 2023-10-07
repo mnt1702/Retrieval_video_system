@@ -4,7 +4,7 @@ function toggleClass(d3obj, name) {
 
 d3.select('body')
   .on('keydown', e => {
-    if (e.code != 'Tab')
+    if (e.code != 'Space' || !e.shiftKey)
       return;
     e.preventDefault();
     toggleClass(d3.select('#search'), 'hidden');
@@ -30,7 +30,8 @@ addEventListener("DOMContentLoaded", evt => {
       if (e.key != 'Enter')
         return;
       e.preventDefault();
-      $("#trl-btn").click()
+      $("#trl_btn").click()
+      $("#query").focus();
     })
 
   d3.select('#query-form')

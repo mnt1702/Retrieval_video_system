@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Modal, Button } from "rsuite";
 import FrameDetails from "./FrameDetails";
+import * as constant from "../constant"
+import SubmissionContext from "../store/submissionContext";
 
 const VideoModal = ({open, setOpen, video_id, setVidID}) => {
-
+    const submitCtx = useContext(SubmissionContext)
     const handleClose = () => setOpen(false)
     const [video, setVideo] = useState("");
     const [frameid, setFrame] = useState("");
@@ -11,13 +13,23 @@ const VideoModal = ({open, setOpen, video_id, setVidID}) => {
         setVideo(video_id.slice(0, 8));
         setFrame(video_id.slice(9));
     }, [video_id]);
+
+    const submitFrame = () => {
+        const fetch_submission = async() => {
+          const response = await fetch(`${constant.host_ip}/submission_final?video=${video}&frame_id=${frameid}&session_id=${submitCtx.submittedFrame.session_id}`)
+          if(response.ok) {
+              let data = await response.json()
+              alert(data)
+          }
+        }
+        fetch_submission()
+      };
+
     return (
         <Modal open={open} onClose={handleClose} backdrop="true" size="full" >
             <Modal.Header>
-                <Button appearance="primary">
+                <Button appearance="primary" onClick={submitFrame}>
                     Submit
-                </Button><Button onClick={handleClose} appearance="primary">
-                    Exit
                 </Button>
 
             </Modal.Header>

@@ -30,6 +30,7 @@ const Image = ({
     }, [isChosen]);
 
     const handleSubmission = () => {
+        
         submissionCtx.submitFrame(video, frameid);
     };
 

@@ -42,7 +42,7 @@
 }
 
 .submit_div > * {
-  height: 4em;
+  height: 3.5rem;
 }
 
 .submit_div span {
@@ -53,7 +53,7 @@
     width: 100%;
     resize: none;
     font-family: 'Montserrat', sans-serif;
-    max-height: 5rem;
+    height: 5rem;
     padding: 1rem;
     border-radius: 5px;
     margin: 1rem 0;
@@ -63,7 +63,7 @@
     width: 77%;
     resize: none;
     font-family: 'Montserrat', sans-serif;
-    max-height: 5rem;
+    height: 6.5rem !important;
     padding: 1rem;
     border-radius: 5px;
     margin: 1rem 0;
@@ -79,7 +79,7 @@ input[name='file'] {
     width: 20%;
     resize: none;
     font-family: 'Montserrat', sans-serif;
-    max-height: 5rem;
+    height: 3.5rem !important;
     padding: 1rem;
     border-radius: 5px;
     margin: 1rem 0;
@@ -90,7 +90,7 @@ input[name='file'] {
     width: 54%;
     resize: none;
     font-family: 'Montserrat', sans-serif;
-    max-height: 5rem;
+    height: 3.5rem !important;
     padding: 1rem;
     border-radius: 5px;
     margin: 1rem 0;

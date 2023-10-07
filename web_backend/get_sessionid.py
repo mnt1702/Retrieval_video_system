@@ -3,7 +3,7 @@ import subprocess
 import json
 import os
 
-def get_sessionId(username, password):
+def get_session(username, password):
     curl = "curl -s -d '{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}' https://eventretrieval.one/api/v1/login"
     args = shlex.split(curl)
     process = subprocess.Popen(args, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)

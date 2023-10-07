@@ -19,40 +19,7 @@ function SubmitButton() {
         }
     }, [submissionCtx.columns["column-1"].frameIds]);
 
-    const exportSubmission = () => {
-        console.log(`${constant.host_ip}/submissions_b1`)
-        const similarity = async () => {
-            setIsLoading(true);
-            const response = await fetch(
-                `${constant.host_ip}/submissions_b1`,
-                {
-                    method: "POST",
-                    "headers": {"Content-Type": "application/json"},
-
-                    body: JSON.stringify({
-                        "data": submissionCSV
-                    })
-                }
-            );
-            if (response.ok) {
-                const data = await response.json()
-
-                if(data) {
-                    const res_ids = data["data"];
-                    setSubmissionCSV(
-                        res_ids.map((id) => {
-                            return {
-                                video: id.slice(0, 8),
-                                frameid: id.slice(9),
-                            };
-                        }),
-                    );
-                }
-            }
-            setIsLoading(false);
-        };
-        similarity();
-    }
+    
 
     const submission = () => {
         const fetch_submit = async () => {

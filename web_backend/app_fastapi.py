@@ -49,6 +49,10 @@ faiss_index = faiss.read_index(f"{source}/faiss_index.bin")
 image_ids = pd.read_csv(f"{source}/image_ids.csv", dtype={"video": "string", "frameid": "string", "url": "string"})
 info_ids = list(zip(image_ids["video"], image_ids["frameid"]))
 
+class fileUploadConfig(BaseModel):
+    file: str
+    topk: int
+
 @app.get('/')
 async def introduce():
     return {"AI CHALLENGE HCM 2023": "HAIDIKICHI"}
@@ -99,38 +103,6 @@ async def get_similarity(video: str, frameid: str, topk: Optional[int] = 100):
     results = get_frame_similarity(image_ids, info_ids, video, frameid, faiss_index, image_clipfeatures, topk)
     return {"data": results}   
 
-class resultsConfig(BaseModel):
-    data: List[str]
-
-
-@app.post("/submissions_b1")
-async def get_submission(results: resultsConfig):
-    if len(results.data) == 0:
-        return JSONResponse({"data": []})
-    topk = round(100 / (2 * len(list(results.data)))) - 1
-    map_results = []
-    for res_id in results.data:
-        video = res_id[:8]
-        frameid = res_id[9:]
-        map_results.append(video + '_'+ str(id))
-    
-    for res_id in map_results:
-        video = res_id[:8]
-        id = res_id[9:]
-        temp = []
-        for i in range(1, topk):
-            temp.append(video + '_' + str(int(id) + i*10))
-            if int(id) > i*12:
-                temp.append(video + '_' + str(int(id) - i*10))
-        if temp:
-            for i in temp: 
-                if i not in map_results:
-                    map_results.append(i)
-                if len(map_results) >= 100:
-                    return JSONResponse({"data": map_results[:101]})
-    
-    return JSONResponse({"data": map_results})
-
 @app.get("/translations")
 async def get_trans(vi_query: Optional[str] = None):
     en_query = GoogleTranslator(source='auto', target='en').translate(vi_query)
@@ -152,7 +124,7 @@ async def get_image(video: str, frameid: str, width: Optional[int] = 144, height
 
 @app.get("/get_sessionId")
 async def get_sessionId():
-    sessionId = get_sessionId("haidikichi", "Cheecea0")
+    sessionId = get_session("haidikichi", "Cheecea0")
     return JSONResponse({"session_id": sessionId})
 
 @app.get("/submission_final")
@@ -163,12 +135,14 @@ async def submission_final(video: str, frame_id: str, session_id: str):
     return JSONResponse(data)
 
 @app.post("/search_image")
-async def create_upload_file(base64_str: str, topk: Optional[int] = 100):
-    imgdata = base64.b64decode(base64_str)
+async def create_upload_file(config: fileUploadConfig):
+    file = config.file.split(',')[1]
+    topk = config.topk
+    imgdata = base64.b64decode(file)
     image = Image.open(io.BytesIO(imgdata))
     image.thumbnail((640, 360))
     results = search_image_vector(image_ids, image, faiss_index, topk)
-    return JSONResponse({"results": results})
+    return JSONResponse({"data": results})
 
 
 if __name__ == '__main__':

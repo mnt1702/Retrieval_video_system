@@ -17,6 +17,7 @@
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",
+    "react-drag-drop-files": "^2.3.10",
     "react-dropzone": "^14.2.3",
     "react-lazy-load-image-component": "^1.5.5",
     "react-scripts": "^2.1.3",

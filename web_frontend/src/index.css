@@ -10,6 +10,7 @@ html {
   height: 100%;
   margin: 0;
   overflow: hidden;
+  font-size: 2.2vmin;
 }
 
 body {
@@ -38,11 +39,24 @@ code {
   right: 1em;
   bottom: 1em;
   font-style: italic;
-  text-size: 0.75em;
+  font-size: 0.75rem;
   z-index: 5;
   display: none;
 }
 
 textarea:nth-of-type(2) {
   overflow: hidden;
+}
+
+textarea {
+  font-size: 1rem !important;
+}
+
+label, span {
+  font-size: 1rem !important;
+}
+
+#image-form > label {
+  height: 3rem;
+  max-width: 100%;
 }

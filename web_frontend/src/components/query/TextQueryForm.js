@@ -8,16 +8,12 @@ function TextQueryForm({ setDataList }) {
     const [query, setQuery] = useState("");
     const [topk, setTopk] = useState(100);
     const [ocrQuery, setOCRQuery] = useState("");
-    const [ocrthresh, setOCRthresh] = useState(0.8);
-    const [topk_o, setTopk_o] = useState("100");
     const nextpageCtx = useContext(NextPageContext);
     const [isLoadingSearch, setIsLoadingSearch] = useState(false); 
-    const [speakQuery, setSpeakQuery] = useState("");
-    const [topk_s, setTopk_s] = useState("100");
+    const [asrQuery, setasrQuery] = useState("");
     const [viQuery, setViQuery] = useState("");
     const [isLoadingTranslation, setIsLoadingTranslation] = useState(false);
     const [selectedImage, setSelectedImage] = useState();
-    const [isLoadingSearchImg, setIsLoadingSearchImg] = useState(false);
     const [img, setImg] = useState("");
     const [imgSearch, setImgSearch] = useState(false)
 
@@ -29,6 +25,7 @@ function TextQueryForm({ setDataList }) {
               `${constant.host_ip}/${url}`
           );
         } else if (method == 'POST') {
+            console.log(method)
           response = await fetch(`${constant.host_ip}/${url}`, {
             method: method,
             headers: {
@@ -40,16 +37,14 @@ function TextQueryForm({ setDataList }) {
         }
         if (response.ok) {
             const data = await response.json();
+            window.data = data;
             setDataList(data);
             nextpageCtx.setPage(1);
             nextpageCtx.setViQuery(viQuery);
             nextpageCtx.setQuery(query);
             nextpageCtx.setTopk(topk);
             nextpageCtx.setOCRQuery(ocrQuery);
-            nextpageCtx.setOCRthresh(ocrthresh);
-            nextpageCtx.setTopk_o(topk_o)
-            nextpageCtx.setSpeakQuery(speakQuery);
-            nextpageCtx.setTopk_s(topk_s);
+            nextpageCtx.setasrQuery(asrQuery);
         }
         setIsLoadingSearch(false);
     };
@@ -60,27 +55,25 @@ function TextQueryForm({ setDataList }) {
         let method = "GET"
         let body = {}
         if (imgSearch) {
-          url += 'search_image'
-          method = "POST"
+          url += "search_image"
           body = {
-            topk: topk,
-            base64_str: img
+            'topk': topk,
+            'file': img
           }
+          method = "POST"
         } else {
           if (!topk)
               setTopk(100);
           url += `search?query=${query}&topk=${topk}`;
           if (ocrQuery) {
-              if (!ocrthresh) setOCRthresh(0.8);
-              url += `&ocrquery=${ocrQuery}&ocrthresh=${ocrthresh}`;
+              url += `&ocrquery=${ocrQuery}`;
           }
-          if (speakQuery) {
-              if (!topk) setTopk(100);
-              url += `&speakquery=${speakQuery}`;
+          if (asrQuery) {
+              url += `&asrquery=${asrQuery}`;
           }
         }
         console.log(url, method, body)
-        // await fetch_image(url);
+        await fetch_image(url, method, body);
     };
 
     const handleKeyDown = (e) => {
@@ -111,7 +104,6 @@ function TextQueryForm({ setDataList }) {
         console.log(formData)
         formData.append("file", selectedImage);
         const fetch_search_image = async () => {
-            setIsLoadingSearchImg(true);
             const response = await fetch(`${constant.host_ip}/search_images`, {
                 method: "POST",
                 body: formData,
@@ -122,7 +114,6 @@ function TextQueryForm({ setDataList }) {
                 console.log(data);
                 setDataList(data);
             }
-            setIsLoadingSearchImg(false);
         };
         fetch_search_image();
     };
@@ -151,13 +142,13 @@ function TextQueryForm({ setDataList }) {
                 />
 
                 <button id='trl_btn' className={classes.scoreBtn}>
-                    {!isLoadingTranslation ? "Translate" : "Loading ..."}
+                    {!isLoadingTranslation ? "Translate" : "Loading"}
                 </button>
             </form>
             <form id='query-form' onSubmit={submitHandler} className={classes.form}>
                 <b> <label> Search </label> </b>
                 <div className={classes.query_div}>
-                    <textarea
+                    <textarea id='query' 
                         className={classes.inputquery}
                         onKeyDown={handleKeyDown}
                         placeholder="Query"
@@ -165,16 +156,7 @@ function TextQueryForm({ setDataList }) {
                         value={query}
                     />
                 </div>
-                <b> <label> Youtube caption  </label> </b>
-                <div className={classes.query_div}>
-                    <textarea
-                        className={classes.inputquery}
-                        onKeyDown={handleKeyDown}
-                        placeholder="Youtube caption"
-                        onChange={(e) => setSpeakQuery(e.target.value)}
-                        value={speakQuery}
-                    />
-                </div>
+
                 <b> <label> OCR </label> </b>
                 <div className={classes.query_div}>
                     <textarea
@@ -184,13 +166,19 @@ function TextQueryForm({ setDataList }) {
                         onChange={(e) => setOCRQuery(e.target.value)}
                         value={ocrQuery}
                     />
+                </div>
+
+                <b> <label> ASR </label> </b>
+                <div className={classes.query_div}>
                     <textarea
-                        className={classes.inputnum}
+                        className={classes.inputocrquery}
                         onKeyDown={handleKeyDown}
-                        onChange={(e) => setOCRthresh(e.target.value)}
-                        value={ocrthresh}
+                        placeholder="ASR Query"
+                        onChange={(e) => setasrQuery(e.target.value)}
+                        value={asrQuery}
                     />
                 </div>
+                
                 <div className={classes.submit_div}>
                   <div>
                     <span>
@@ -204,10 +192,10 @@ function TextQueryForm({ setDataList }) {
                     />
                   </div>
                   <button id='query-btn' className={classes.scoreBtn}> 
-                      { !isLoadingSearch ? "Search" : "Loading ..."}
+                      { !isLoadingSearch ? "Search" : "Loading"}
                   </button>
                   <div>
-                    <input type="checkbox" value={imgSearch} onChange={(e) => setImgSearch(e.target.checked)}></input>
+                    <input type="checkbox" value={imgSearch} onChange={((e) => (setImgSearch(e.target.checked), window.imgSearch=e.target.checked))}></input>
                     <label><b> Use image </b></label>
                   </div>
                 </div>

@@ -22,15 +22,17 @@ function App() {
 
     const  fetchSession = async () => {
         console.log(`${constant.host_ip}/get_sessionId`)
-    //     const response = await fetch(`${constant.host_ip}/get_sessionId`)
-    //     if(response.ok) {
-    //         let data = await response.json
-    //         submitCtx.setSession(data.session_id)
-    //     }
-    // }
-    // useEffect(() => {
-    //   fetchSession()
+        const response = await fetch(`${constant.host_ip}/get_sessionId`)
+        if(response.ok) {
+            let data = await response.json()
+            submitCtx.setSession(data.session_id)
+            console.log(data.session_id)
+        }
     }
+    useEffect(() => {
+        if (submitCtx.submittedFrame.session_id == "")
+            fetchSession()
+    })
 
 
     return (
@@ -47,9 +49,6 @@ function App() {
                       setOpen={setOpenModal}
                       setOpenedVidID={setOpenedVidID}
                   />
-              </div><div className={classes.submission_space}>
-                  <SubmissionList />
-                  <SubmitButton />
               </div>
             </div>
             <VideoModal

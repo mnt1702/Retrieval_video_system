@@ -15,7 +15,7 @@
 
 .container > div:nth-of-type(2) {
     display: grid;
-    grid-template-rows: auto 3.5rem;
+    grid-template-rows: auto;
     overflow: hidden;
 }
 

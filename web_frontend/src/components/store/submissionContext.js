@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import * as constant from "../constant"
 
 const SubmissionContext = React.createContext({
     submittedFrames: {},
@@ -43,6 +44,14 @@ export const SubmissionProvider = ({ children }) => {
         frame_id: frameid,
         session_id: submittedFrame.session_id
       })
+      const fetch_submission = async() => {
+        const response = await fetch(`${constant.host_ip}/submission_final?video=${video}&frame_id=${frameid}&session_id=${submittedFrame.session_id}`)
+        if(response.ok) {
+            let data = await response.json()
+            alert(data)
+        }
+      }
+      fetch_submission()
     };
 
     const setSession = session => {
