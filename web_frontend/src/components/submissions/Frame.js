@@ -30,7 +30,7 @@ const Frame = (props) => {
                     >
                         <img
                             className={classes.image}
-                            src={`${constant.host_ip}/get_image?video=${props.frame.video}&frameid=${props.frame.frameid}&mode="thumbnail`}
+                            src={`${constant.host_ip}/get_image?video=${props.frame.video}&frameid=${props.frame.frameid}`}
                         />
                         {isHovering && (
                             <button className={classes.btn} onClick={handleRemove}>

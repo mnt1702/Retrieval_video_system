@@ -2,7 +2,7 @@ from elasticsearch import Elasticsearch, helpers
 from utils import *
 from constant import *
 import pandas as pd
-from search import *
+# from search import *
 from constant import *
 
 client = Elasticsearch(
@@ -86,7 +86,7 @@ if __name__ == '__main__':
     # topk = 5
     # results = search_vector(image_ids, faiss_index= faiss_index, topk= topk, query= query)
     
-    re = search_ocr_asr(image_ids, ocr_query= None, asr_query=None, index_name="aic", mode="all")
+    re = search_ocr_asr(image_ids, ocr_query= "coffee", asr_query=None, index_name="aic", mode="all")
     print(re)
 
     # Xóa index khi cần
