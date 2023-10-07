@@ -5,6 +5,7 @@ import clip
 import torch
 from constant import *
 from PIL import Image
+import sys
 from constant import *
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -14,6 +15,7 @@ model, preprocess = clip.load("ViT-B/32", device=device)
 def get_feature_vector(text_query):
     text = clip.tokenize([text_query]).to(device)  
     text_features = model.encode_text(text).cpu().detach().numpy().astype(np.float64)
+    text_features /= np.linalg.norm(text_features, axis=1).reshape((-1, 1))
     return text_features
 
 def get_frame_feature_vector(video, frameids):
@@ -55,7 +57,8 @@ def get_frame_similarity(image_ids, info_ids, video, frameid, faiss_index, image
     frame_feature_vector = image_clipfeatures[img_idx].astype(np.float64)
     frame_feature_vector = np.expand_dims(frame_feature_vector, axis=0)
     
-    f_dist, f_ids = faiss_index.search(frame_feature_vector, topk + 1)    
+    f_dist, f_ids = faiss_index.search(frame_feature_vector, topk + 1)
+
     f_ids = np.array(f_ids[0])
     results = []
     for id in f_ids[1:]:
@@ -81,7 +84,6 @@ def search_image_vector(image_ids, image, faiss_index, topk):
     return results
 
 # if __name__ == '__main__':
-    
 #     faiss_index = faiss.read_index(f"{source}/faiss_index.bin")
 #     topk = 5
 

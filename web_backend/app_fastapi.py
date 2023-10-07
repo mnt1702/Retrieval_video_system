@@ -27,6 +27,7 @@ from typing import Annotated
 from get_sessionid import *
 import requests
 from es import *
+import base64
 
 app = FastAPI()
 
@@ -39,20 +40,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-# translation vin
-# tokenizer_vi2en = AutoTokenizer.from_pretrained("vinai/vinai-translate-vi2en", src_lang="vi_VN")
-# model_vi2en = AutoModelForSeq2SeqLM.from_pretrained("vinai/vinai-translate-vi2en")
-
-
-f = open(f'{source}/captions.json', encoding="utf8")
-caption = json.load(f)
-f.close()
-#OCR
-infos = get_all_ocr_infos(f"{source}/OCR.csv")
-#Caption
-f = open(f'{source}/captions.json', encoding="utf8")
-caption = json.load(f)
-f.close()
 
 #CLIP feature
 image_clipfeatures = np.load(f"{source}/clip_embeddings.npy")
@@ -67,34 +54,26 @@ async def introduce():
     return {"AI CHALLENGE HCM 2023": "HAIDIKICHI"}
 
 @app.get('/search')
-async def get_frame_from_query(query: Optional[str] = None, topk: Optional[int] = 100, 
-                               ocrquery: Optional[str] = None, ocrthresh: Optional[float] = 0.8, topk_o: Optional[int] = 100,
-                               speakquery: Optional[str] = None, topk_s: Optional[int] = 100):
+async def get_frame_from_query(query: Optional[str] = None, topk: Optional[int] = 100, ocrquery: Optional[str] = None, asrquery: Optional[str] = None):
     if not query: query = None
     if not ocrquery: ocrquery = None
-    if not speakquery: speakquery = None
+    if not asrquery: asrquery = None
+    
+    ocrnasr = True
+    if not ocrquery and not asrquery:
+        ocrnasr = False
 
-    if not query and ocrquery:
+    if not query and ocrnasr == True:
         results = []
-        results = search_ocr(ocrquery, image_ids, ocrthresh, topk_s, index_name="ocr", mode="all")
-    if query and not ocrquery:
+        results = search_ocr_asr(image_ids, ocrquery, asrquery, topk, index_name="aic", mode="all")
+    if query and ocrnasr == False:
         results = []
         results = search_vector(image_ids, faiss_index= faiss_index, topk= topk, query= query)
-    if query and ocrquery:
-        if not ocrthresh: 
-            ocrthresh = 0.8
+    if query and ocrnasr == True:
         candidates = []
-        candidates = search_vector(image_ids, faiss_index= faiss_index, topk= max(topk, topk_o), query= query)
-        results = search_ocr(ocrquery, candidates , ocrthresh, topk_s, index_name="ocr", mode="combine")
-    flag = False
-    if query or ocrquery:
-        flag = True
-
-    if flag  == False and speakquery:
-        candiates = list(image_ids['video'])
-        results = find_text(caption, speakquery, candiates, topk_s, "all")
-    elif flag and speakquery:
-        results = find_text(caption, speakquery, results, topk_s, "res")
+        candidates = search_vector(image_ids, faiss_index= faiss_index, topk= topk, query= query)
+        results = search_ocr_asr(candidates, ocrquery, asrquery, topk, index_name="aic", mode="combine")
+    
     return JSONResponse({"data": results})
 
 @app.get('/get_metadata')
@@ -183,11 +162,10 @@ async def submission_final(video: str, frame_id: str, session_id: str):
     data = r.text
     return JSONResponse(data)
 
-
 @app.post("/search_image")
-async def create_upload_file(file: UploadFile, topk: Optional[int] = 100):
-    request_object_content = await file.read()
-    image = Image.open(io.BytesIO(request_object_content))
+async def create_upload_file(base64_str: str, topk: Optional[int] = 100):
+    imgdata = base64.b64decode(base64_str)
+    image = Image.open(io.BytesIO(imgdata))
     image.thumbnail((640, 360))
     results = search_image_vector(image_ids, image, faiss_index, topk)
     return JSONResponse({"results": results})

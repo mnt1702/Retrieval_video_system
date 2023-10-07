@@ -18,9 +18,7 @@ def compute_clip_feature(img_path):
     return img_feature.cpu().numpy()
 
 def compute_image_clip_feature(img):
-    
     image = preprocess(img).unsqueeze(0).to(device)
-
     with torch.no_grad():
         img_feature = model.encode_image(image)
         # img_feature /= img_feature.norm(dim=-1, keepdim=True)

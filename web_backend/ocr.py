@@ -38,12 +38,12 @@ def search_ocr_all(query, infos, crt_threshold=0.8, top_k=100):
         final_results.append(result['video'] + '_' + result['frameid'])
     return final_results
 
-def search_ocr(query, candiates, infos, crt_threshold=0.8, top_k=100):
+def search_ocr(query, candidates, infos, crt_threshold=0.8, top_k=100):
     # split query
     words = query.split(" ")
 
     candiate_infos = []
-    for candiate in candiates:
+    for candiate in candidates:
         video = candiate[:8]
         frameid = candiate[9:]
         # print(video, frameid)
@@ -89,9 +89,9 @@ def search_ocr(query, candiates, infos, crt_threshold=0.8, top_k=100):
 #         print(result)
 #         print("=====================================")
 
-#     # candiates = pd.read_csv("F:/AIC2023/dataset/image_ids.csv", dtype={"filepath": "string", "video": "string", "frameid": "string"})
+#     # candidates = pd.read_csv("F:/AIC2023/dataset/image_ids.csv", dtype={"filepath": "string", "video": "string", "frameid": "string"})
 #     # ids = []
 #     # ids = full_search("There is a coffee house", 100)
-#     # candiates = get_vid_frameids(ids)
-#     # res = search_ocr(query, candiates, infos, crt_threshold=0.8, top_k=100)
+#     # candidates = get_vid_frameids(ids)
+#     # res = search_ocr(query, candidates, infos, crt_threshold=0.8, top_k=100)
 #     # print(res)

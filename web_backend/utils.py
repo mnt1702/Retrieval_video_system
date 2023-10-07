@@ -3,9 +3,9 @@ import Levenshtein
 import csv
 import ast
 
-def get_info_by_id(video, frameid, infos):
+def get_info_by_id(video_id, keyframe_id, infos):
     for info in infos:
-        if info["video"] == video and info["frameid"] == frameid:
+        if info["video_id"] == video_id and info["keyframe_id"] == keyframe_id:
             return info
     return None
     
@@ -26,7 +26,8 @@ def isEqual(str1, str2, threshold=0.8):
         return False
 
 def get_all_ocr_infos(root_file = None, root_dir = None):
-
+    # info = {"keyframe_id": id, "video_id": video_id, 
+            #  "texts": texts, "polygons": polygons, "scores": scores}
     
     infos = []
     
@@ -35,11 +36,11 @@ def get_all_ocr_infos(root_file = None, root_dir = None):
             reader = csv.DictReader(csvfile)
             for row in reader:
                 info = {}
-                info["frameid"] = row["keyframe_id"]
-                info["video"] = row["video_id"]
+                info["keyframe_id"] = row["keyframe_id"]
+                info["video_id"] = row["video_id"]
 
-                info["texts"] = row["texts"]
-                info["texts"] = info["texts"].split(' ')
+                info["ocr"] = row["ocr"]
+                info["asr"] = row["asr"]
 
                 # info["polygons"] = row["polygons"]
                 # info["polygons"] = ast.literal_eval(info["polygons"])
@@ -60,8 +61,8 @@ def get_all_ocr_infos(root_file = None, root_dir = None):
                 lines = f.readlines()
 
                 info = {}
-                info["frameid"] = ocr_file.split("\\")[-1].split(".")[0]
-                info["video"] = ocr_file.split("\\")[-2]
+                info["keyframe_id"] = ocr_file.split("\\")[-1].split(".")[0]
+                info["video_id"] = ocr_file.split("\\")[-2]
                 info["texts"] = []
                 info["polygons"] = []
                 info["scores"] = []
