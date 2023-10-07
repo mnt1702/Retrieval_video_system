@@ -2,7 +2,7 @@ from elasticsearch import Elasticsearch, helpers
 from utils import *
 from constant import *
 import pandas as pd
-# from search import *
+from search import *
 from constant import *
 
 client = Elasticsearch(
@@ -37,16 +37,11 @@ def search_ocr_asr(candidates,
     
     ids = []
 
-    if mode == "all":
-        for video_id, keyframe_id in list(zip(candidates['video'], candidates['frameid'])):
-            kv_id = keyframe_id + "-" + video_id
-            ids.append(kv_id)
-    elif mode == "combine":
-        for candidate in candidates:
-            video_id = candidate[:8]
-            keyframe_id = candidate[9:]
-            kv_id = keyframe_id + "-" + video_id
-            ids.append(kv_id)
+    for candidate in candidates:
+        video_id = candidate[:8]
+        keyframe_id = candidate[9:]
+        kv_id = keyframe_id + "-" + video_id
+        ids.append(kv_id)
 
     ocr_query = {
         "bool": {
@@ -58,7 +53,7 @@ def search_ocr_asr(candidates,
                 "ids": {
                     "values": ids
                 }
-            }
+            } if ids else []
         }
     }
 
@@ -79,15 +74,15 @@ if __name__ == '__main__':
     # index_ocr_bulk(infos, index_name="aic", bulk_size=10000)
     
     # Tìm kiếm
-    image_ids = pd.read_csv(f"{source}/image_ids.csv", dtype={"video": "string", "frameid": "string", "url": "string"})
+    # image_ids = pd.read_csv(f"{source}/image_ids.csv", dtype={"video": "string", "frameid": "string", "url": "string"})
     # faiss_index = faiss.read_index(f"{source}/faiss_index.bin")
     # query = "The coffee house"
     # ocr_q = "COFFEE"
     # topk = 5
     # results = search_vector(image_ids, faiss_index= faiss_index, topk= topk, query= query)
     
-    re = search_ocr_asr(image_ids, ocr_query= "coffee", asr_query=None, index_name="aic", mode="all")
-    print(re)
-
+    # re = search_ocr_asr(image_ids, ocr_query= None, asr_query=None, index_name="aic", mode="all")
+    # print(re)
+    print("ok")
     # Xóa index khi cần
     # client.indices.delete(index="aic")

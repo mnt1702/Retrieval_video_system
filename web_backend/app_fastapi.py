@@ -69,7 +69,7 @@ async def get_frame_from_query(query: Optional[str] = None, topk: Optional[int] 
 
     if not query and ocrnasr == True:
         results = []
-        results = search_ocr_asr(image_ids, ocrquery, asrquery, topk, index_name="aic", mode="all")
+        results = search_ocr_asr([], ocrquery, asrquery, topk, index_name="aic", mode="all")
     if query and ocrnasr == False:
         results = []
         results = search_vector(image_ids, faiss_index= faiss_index, topk= topk, query= query)
