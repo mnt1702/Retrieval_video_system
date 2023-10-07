@@ -3,10 +3,50 @@
     overflow: auto;
 }
 
+.scoreBtn:nth-of-type(1) {
+  margin: 0px auto;
+}
+
 .form{
     display: flex;
     flex-direction: column;
     margin: 0.5rem 1rem;
+}
+
+.query_div {
+  display: flex;
+}
+
+.query_div textarea:nth-of-type(1) {
+  flex-grow: 1;
+}
+
+.submit_div {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 2vh;
+}
+
+.submit_div textarea {
+  margin: unset;
+  height: 100%;
+  width: 4rem;
+  margin-left: 1vw;
+}
+
+.submit_div > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.submit_div > * {
+  height: 4em;
+}
+
+.submit_div span {
+  font-weight: bold;
 }
 
 .inputtrans{
@@ -57,15 +97,18 @@ input[name='file'] {
     background-color: #dce8df;
 }
 
-
-
 .scoreBtn{
-    width: 8rem;
+    width: 6rem;
     font-size: 1.3rem;
     height: 2.7rem;
-    margin: 0 auto;
     background-color: lightblue;
     border-radius: 2vh;
+}
+
+.submit_div input[type='checkbox'] {
+  margin-right: 1vh;
+  width: 1rem;
+  height: 1rem;
 }
 
 .scoreBtn:hover {
