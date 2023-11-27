@@ -3,6 +3,10 @@ import torch
 from PIL import Image
 import pandas as pd 
 import numpy as np
+import sys
+sys.path.append("web_backend")
+
+from constant import *
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model, preprocess = clip.load("ViT-B/32", device=device)
@@ -16,9 +20,9 @@ def computeImageFeature(img):
 
 if __name__ == '__main__':
     # test 
-    path = 'F:\\AIC2023\\keyframes\\L01\\L01_V001\\40.jpg'
+    path = f'{source}\\keyframes\\L01\\L01_V001\\40.jpg'
     image = Image.open(path)
     fe1 = computeImageFeature(image)
-    clipa = np.load("F:\AIC2023\Cvecs\L01_V001.npy")
+    clipa = np.load(f"{source}\Cvecs\L01_V001.npy")
     print("dis: ", np.linalg.norm(fe1 - clipa[1]))
 

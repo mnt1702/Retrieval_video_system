@@ -57,10 +57,11 @@ const Infos = ({videoId, keyframeId, setVidID, onClose }) => {
                     <div className={classes.imageSection}>
                         <img
                             src={`${constant.host_ip}/image/${videoId}/${keyframeId}`}
+                            alt= 'Keyframe'
                         />
 
                         <div className={classes.videoSection}>
-                            <iframe src= {url}> </iframe>
+                            <iframe src= {url} title="Video"> </iframe>
                         </div>
                     </div>
 

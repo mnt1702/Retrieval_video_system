@@ -8,7 +8,7 @@ sys.path.append("web_backend")
 from constant import *
 
 if __name__ == "__main__":
-    for file_dir in tqdm(glob.glob(f"{source}\\keyframes\\*\\*\\*.jpg")):
+    for file_dir in tqdm(glob.glob(f"{source}\\newFrames\\*\\*\\*.jpg")):
         
         #Resize image
         file_name = file_dir.split("\\")[-1]
@@ -16,7 +16,7 @@ if __name__ == "__main__":
         image.thumbnail((640, 360))
         
         #Save image
-        save_path = file_dir.replace("Frame", "Reframe")
+        save_path = file_dir.replace("newFrames", "keyframes")
         if not os.path.exists(save_path.replace(file_name, "")):
             os.makedirs(save_path.replace(file_name, ""))
         

@@ -11,7 +11,6 @@ function QueryForm({ setDataList }) {
     const [ocrQuery, setOcrQuery] = useState("");
     const [asrQuery, setAsrQuery] = useState("");
     const [topK, setTopK] = useState(100);
-    const [selectedImage, setSelectedImage] = useState();
     const [imgQuery, setImgQuery] = useState("");
     const [imgSearch, setImgSearch] = useState(false)
     const [isLoadingSearch, setIsLoadingSearch] = useState(false); 
@@ -20,11 +19,11 @@ function QueryForm({ setDataList }) {
     const fetch_searchEngine = async (url, method='GET', post_body={}) => {
         setIsLoadingSearch(true);
         let response = {ok: false}
-        if (method == 'GET') {
+        if (method === 'GET') {
           response = await fetch(
               `${constant.host_ip}/${url}`
           );
-        } else if (method == 'POST') {
+        } else if (method === 'POST') {
           response = await fetch(`${constant.host_ip}/${url}`, {
             method: method,
             headers: {
@@ -90,28 +89,6 @@ function QueryForm({ setDataList }) {
         }
         setIsLoadingTranslation(false);
     }
-    
-    const changeHandler = (event) => {
-        setSelectedImage(event.target.files[0]);
-    };
-
-    const handleSubmission = (event) => {
-        event.preventDefault();
-        const formData = new FormData();
-        formData.append("file", selectedImage);
-        const fetch_search_image = async () => {
-            const response = await fetch(`${constant.host_ip}/search_image`, {
-                method: "POST",
-                body: formData,
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                setDataList(data);
-            }
-        };
-        fetch_search_image();
-    };
 
     const fileChange = e => {
       const reader = new FileReader()

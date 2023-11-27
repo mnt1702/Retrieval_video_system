@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import * as constant from "../constant"
 
 const SubmitContext = React.createContext({
