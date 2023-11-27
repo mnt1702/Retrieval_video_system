@@ -1,61 +1,55 @@
 import React, { useContext, useEffect } from "react";
-import TextQueryForm from "./components/query/TextQueryForm";
-import classes from "./App.module.css";
-import Logo from "./components/query/Logo";
-import ImageList from "./components/search/ImageList";
 import { useState } from "react";
-import VideoModal from "./components/search/VideoModal";
 import "../node_modules/rsuite/dist/rsuite.min.css";
-import SubmissionList from "./components/submissions/SubmissionList";
-import SubmitButton from "./components/submissions/SubmitButton";
-import NextPageContext from "./components/store/nextpageCtx";
-import SubmissionContext from "./components/store/submissionContext";
+
+import classes from "./App.module.css";
+import QueryForm from "./components/search/QueryForm"
+import FramesList from "./components/results/FramesList";
+import PageDetails from "./components/results/pageDetails";
+import SubmitContext from "./components/context/submitStoredContext";
+
 import * as constant from "./components/constant"
 
 
 function App() {
-    const [dataList, setDataList] = useState({ data: [] });
-    const [openModal, setOpenModal] = useState(false);
+    const [dataList, setDataList] = useState({ results: [] });
+    const [openPage, setOpenPage] = useState(false);
     const [openedVidID, setOpenedVidID] = useState("");
-    const nextpageCtx = useContext(NextPageContext);
-    const submitCtx = useContext(SubmissionContext)
+    const submitCtx = useContext(SubmitContext)
 
-    const  fetchSession = async () => {
-        console.log(`${constant.host_ip}/get_sessionId`)
-        const response = await fetch(`${constant.host_ip}/get_sessionId`)
+    const  fetchSessionId = async () => {
+        const response = await fetch(`${constant.host_ip}/sessionId`)
         if(response.ok) {
             let data = await response.json()
-            submitCtx.setSession(data.session_id)
-            console.log(data.session_id)
+            submitCtx.setSessionId(data["sessionId"])
         }
     }
+
     useEffect(() => {
-        if (submitCtx.submittedFrame.session_id == "")
-            fetchSession()
+        if (submitCtx.sessionId == "")
+            fetchSessionId()
     })
 
 
     return (
         <div className={classes.container}>
             <div id='search' className={classes.search_space}>
-                <TextQueryForm setDataList={setDataList} />
-		<span id='note'>Press Tab to focus on the result</span>
+                <QueryForm setDataList={setDataList} />
             </div>
             <div id='submission'>
               <div className={classes.result_space}>
-                  <ImageList
+                  <FramesList
                       dataList={dataList}
                       setDataList={setDataList}
-                      setOpen={setOpenModal}
+                      setOpen={setOpenPage}
                       setOpenedVidID={setOpenedVidID}
                   />
               </div>
             </div>
-            <VideoModal
-                id='video_model' 
-                open={openModal}
-                setOpen={setOpenModal}
-                video_id={openedVidID}
+            <PageDetails
+                open={openPage}
+                setOpen={setOpenPage}
+                info={openedVidID}
                 setVidID={setOpenedVidID}
             />
         </div>

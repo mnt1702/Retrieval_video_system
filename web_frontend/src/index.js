@@ -3,14 +3,14 @@ import ReactDOM from "react-dom/client";
 
 import "./index.css";
 import App from "./App";
-import { SubmissionProvider } from "./components/store/submissionContext";
-import { NextPageContextProvider } from "./components/store/nextpageCtx";
+import { SubmitContextProvider } from "./components/context/submitStoredContext";
+import { SearchContextProvider } from "./components/context/searchStoredContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-    <NextPageContextProvider>
-        <SubmissionProvider>
+    <SearchContextProvider>
+        <SubmitContextProvider>
             <App />
-        </SubmissionProvider>
-    </NextPageContextProvider>
+        </SubmitContextProvider>
+    </SearchContextProvider>
 );

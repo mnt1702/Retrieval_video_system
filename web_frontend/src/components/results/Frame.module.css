@@ -1,0 +1,50 @@
+.container {
+    width: fit-content;
+    margin: 0;
+    position: relative;
+    contain: paint;
+}
+
+.imageContainer {
+    border: solid 2px #2a302c;
+
+}
+
+.imageContainer:hover {
+    border: solid 2px green;
+}
+
+.image{
+    width: 100%;
+}
+
+.btns {
+    position: absolute;
+    /* margin-left: 8.5rem; */
+    z-index: 100;
+}
+
+.btn {
+    width: fit-content;
+    height: 1.5rem;
+    font-size: 1rem;
+    background-color: rgba(204, 204, 204, 0.841);
+    border-radius: 5px;
+    margin: 0.25rem;
+    z-index: 30;
+}
+
+.btn:hover{
+    background-color: rgb(144, 150, 238);
+} 
+
+.details {
+    position:absolute;
+    margin-top: -1.7rem;
+    margin-left: 0.3rem;
+
+    height: 1.5rem;
+    font-size: 1rem;
+    background-color: rgba(204, 204, 204, 0.841);
+    border-radius: 5px;
+}

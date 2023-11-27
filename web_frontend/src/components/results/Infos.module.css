@@ -1,0 +1,58 @@
+#main-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.container {
+    width: 100%;
+    height: 70vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.container h5 {
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+}
+
+.imageSection {
+    width: 100%;
+    height: 60%;
+    display: flex;
+    flex-direction: row;
+}
+
+.videoSection {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+}
+
+.videoSection iframe {
+    width: 100%
+}
+
+.nearbyFramesList {
+    display: flex;
+    flex-direction: row;
+    overflow: auto;
+}
+
+.similarFrames {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.similarFrames > div {
+    width: calc(100%/7);
+}
+
+.imageNearCont {
+    text-align: center;
+    margin: 2vh 0;
+}
